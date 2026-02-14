@@ -2,9 +2,8 @@ name: Daily Schedule Update
 
 on:
   schedule:
-    # Runs at 11:00 UTC (which is 4:00 AM Denver Time)
     - cron: '0 11 * * *'
-  workflow_dispatch: # Allows you to run it manually via button click
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -28,6 +27,16 @@ jobs:
 
       - name: Run Scraper
         run: python scrape.py
+
+      # --- NEW: Upload Debug Artifacts ---
+      - name: Upload Debug Screenshots
+        uses: actions/upload-artifact@v4
+        if: always() # Run this even if the script fails
+        with:
+          name: debug-evidence
+          path: |
+            debug_screenshot.png
+            debug_source.html
 
       - name: Commit and Push Data
         run: |
