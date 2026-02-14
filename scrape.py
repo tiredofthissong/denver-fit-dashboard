@@ -1,5 +1,5 @@
 """
-CarlaFit Scraper v4.0 — Undetected Mode
+CarlaFit Scraper v5.0 — Undetected Mode (Required)
 """
 import time
 import csv
@@ -22,7 +22,7 @@ log = logging.getLogger("carlafit")
 def setup_driver():
     """
     Initializes Undetected Chromedriver. 
-    This is the key to bypassing the 'Timeout/White Screen' blocks.
+    This is REQUIRED to bypass the 'Timeout/White Screen' blocks.
     """
     opts = uc.ChromeOptions()
     opts.add_argument("--headless=new") 
@@ -30,8 +30,7 @@ def setup_driver():
     opts.add_argument("--disable-dev-shm-usage")
     opts.add_argument("--window-size=1920,1080")
     
-    # Initialize UC driver
-    # version_main=None allows it to auto-match the installed Chrome version
+    # Initialize UC driver (version_main=None auto-matches Chrome)
     driver = uc.Chrome(options=opts, version_main=None)
     return driver
 
@@ -49,13 +48,12 @@ def next_occurrence(day_abbr):
 
 def classify(name):
     low = name.lower()
-    if any(x in low for x in ["yoga", "pilates", "stretch", "tai chi"]): return "Yoga"
+    if any(x in low for x in ["yoga", "pilates", "stretch"]): return "Yoga"
     if any(x in low for x in ["cycle", "cycling", "spin", "zumba", "dance", "hiit", "cardio", "kickbox"]): return "Cardio"
     if any(x in low for x in ["aqua", "swim", "water", "pool"]): return "Aqua"
     if any(x in low for x in ["pump", "strength", "tone", "weight", "boot", "circuit", "barre"]): return "Strength"
     if any(x in low for x in ["pickleball", "basketball", "volleyball", "tennis"]): return "Sports"
     if "aoa" in low or "older adult" in low: return "Active Older Adults"
-    if "gym" in low or "drop" in low: return "Open Gym"
     return "Fitness"
 
 def scrape():
@@ -71,7 +69,7 @@ def scrape():
         # Smart Wait: Look for the 'tbody' tag (Container for list results)
         try:
             log.info("Waiting for data table...")
-            WebDriverWait(driver, 45).until(
+            WebDriverWait(driver, 60).until(
                 EC.presence_of_element_located((By.TAG_NAME, "tbody"))
             )
             time.sleep(5) # Let the DOM settle
@@ -81,15 +79,12 @@ def scrape():
 
         soup = BeautifulSoup(driver.page_source, "html.parser")
         
-        # In List View, results are rows (tr) inside the tbody
         rows = soup.find_all("tr")
         log.info(f"Found {len(rows)} potential rows")
 
         seen = set()
         for row in rows:
             text = row.get_text(" | ", strip=True)
-            
-            # Filter
             if "Carla Madison" not in text: continue
             if text in seen: continue
             seen.add(text)
