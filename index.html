@@ -75,7 +75,7 @@
     </style>
 </head>
 <body>
-<div x-data="app()" x-init="init()">
+<div x-data="app()">
     <header class="header">
         <div class="header-inner">
             <div class="brand">
@@ -137,7 +137,7 @@
                                         <span x-show="cls.Price!=='Free'" style="color:var(--green)" x-text="cls.Price"></span>
                                     </div>
                                     <div class="card-footer">
-                                        <span class="status" :class="'status-'+cls.Status.toLowerCase().replace(' ','-')" x-text="cls.Status"></span>
+                                        <span class="status" :class="'status-'+(cls.Status||'open').toLowerCase().replace(' ','-')" x-text="cls.Status||'Open'"></span>
                                         <div class="card-actions">
                                             <a :href="calLink(cls)" target="_blank" class="btn btn-cal" title="Add to Google Calendar">📅</a>
                                             <a :href="cls.Link" target="_blank" class="btn btn-primary" :class="{disabled:cls.Status==='Full'}">
@@ -169,7 +169,7 @@
                                 <span x-show="cls.Price!=='Free'" style="color:var(--green)" x-text="cls.Price"></span>
                             </div>
                             <div class="card-footer">
-                                <span class="status" :class="'status-'+cls.Status.toLowerCase().replace(' ','-')" x-text="cls.Status"></span>
+                                <span class="status" :class="'status-'+(cls.Status||'open').toLowerCase().replace(' ','-')" x-text="cls.Status||'Open'"></span>
                                 <div class="card-actions">
                                     <a :href="calLink(cls)" target="_blank" class="btn btn-cal" title="Add to Google Calendar">📅</a>
                                     <a :href="cls.Link" target="_blank" class="btn btn-primary" :class="{disabled:cls.Status==='Full'}">
@@ -194,6 +194,7 @@ function app(){
         view:'day',
         classes:[],
         lastSync:null,
+        // Verified: URL Correct
         csvUrl:'https://raw.githubusercontent.com/tiredofthissong/denver-fit-dashboard/main/fitness_schedule.csv',
         location:'Carla Madison Rec Center, 2401 E Colfax Ave, Denver, CO 80206',
 
@@ -202,12 +203,8 @@ function app(){
             const now=new Date();
             const diff=now-this.lastSync;
             const mins=Math.floor(diff/60000);
-            const hrs=Math.floor(diff/3600000);
-            const days=Math.floor(diff/86400000);
             if(mins<1)return 'Just now';
-            if(mins<60)return `${mins}m ago`;
-            if(hrs<24)return `${hrs}h ago`;
-            return `${days}d ago`;
+            return `${mins}m ago`;
         },
 
         get categories(){
@@ -293,6 +290,7 @@ function app(){
         },
 
         init(){
+            // Attempt to get last sync time, fail gracefully if API limit hit
             fetch('https://api.github.com/repos/tiredofthissong/denver-fit-dashboard/commits?path=fitness_schedule.csv&per_page=1')
                 .then(r=>r.json())
                 .then(commits=>{
@@ -306,15 +304,21 @@ function app(){
                 download:true,header:true,skipEmptyLines:true,
                 complete:res=>{
                     if(res.data&&res.data.length>0){
-                        this.classes=res.data.filter(r=>r.Name&&r.Name.trim());
+                        // Fallback logic in case CSV is old format
+                        this.classes=res.data.filter(r=>r.Name&&r.Name.trim()).map(r => ({
+                            ...r,
+                            Status: r.Status || 'Open',
+                            Price: r.Price || 'Free',
+                            Category: r.Category || r.Type || 'Fitness' // Fallback for old CSV schema
+                        }));
                         this.loading=false;
                     }else{
-                        this.error='Schedule CSV not found. Push fitness_schedule.csv to GitHub and run the workflow.';
+                        this.error='Schedule Empty. Please check the Scraper Action logs.';
                         this.loading=false;
                     }
                 },
                 error:()=>{
-                    this.error='Schedule not synced yet. Run Actions → Daily Schedule Scrape to generate it.';
+                    this.error='Could not load schedule. Please wait for the Scraper to finish.';
                     this.loading=false;
                 }
             });
