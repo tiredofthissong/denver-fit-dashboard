@@ -1,5 +1,6 @@
 import time
 import pandas as pd
+import os
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -9,8 +10,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 
 # --- CONFIGURATION ---
-# We use the 'List View' (displayType=1) because it is much easier for a robot to read than a calendar grid.
-# Location 363 = Carla Madison
+# We stick to the List View (displayType=1) as it is usually text-heavy
 TARGET_URL = "https://anc.apm.activecommunities.com/denver/calendars?onlineSiteId=0&defaultCalendarId=5&locationId=363&displayType=1&view=2"
 
 def setup_driver():
@@ -19,88 +19,119 @@ def setup_driver():
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--window-size=1920,1080")
-    # Fool the site into thinking we are a real user
     options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
     return webdriver.Chrome(options=options)
 
 def scrape_schedule():
-    print("🚀 Starting Extraction...")
+    print("🚀 Starting Robust Extraction...")
     driver = setup_driver()
+    classes_data = []
     
     try:
         driver.get(TARGET_URL)
-        # Wait up to 15 seconds for the calendar data to load
-        WebDriverWait(driver, 15).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "fc-list-table"))
-        )
-        time.sleep(3) # Extra buffer for "AJAX" to settle
+        print("🔗 Navigated to URL. Waiting for AJAX...")
         
+        # Wait longer (20s) and specifically for the main container
+        WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "body"))
+        )
+        time.sleep(10) # Aggressive wait for ActiveNet's slow spinner
+        
+        # --- DEBUG ARTIFACTS ---
+        # We save these to check later if the CSV is still empty
+        driver.save_screenshot("debug_screenshot.png")
+        with open("debug_source.html", "w", encoding="utf-8") as f:
+            f.write(driver.page_source)
+        print("📸 Screenshot and HTML saved for debugging.")
+
         soup = BeautifulSoup(driver.page_source, 'html.parser')
         
-        classes_data = []
-        
-        # In 'List View', ActiveNet uses a table with class 'fc-list-table'
-        # We iterate through the rows.
+        # --- STRATEGY 1: The Standard Table ---
         rows = soup.select(".fc-list-table tbody tr")
-        
-        current_date = ""
-        
+        print(f"👀 Strategy 1 found {len(rows)} table rows.")
+
+        # --- STRATEGY 2: Text Search (Fallback) ---
+        if len(rows) == 0:
+            print("⚠️ Table not found. Attempting Text Search...")
+            # Find all elements containing "FIT:"
+            fit_elements = soup.find_all(string=lambda text: text and "FIT:" in text)
+            print(f"👀 Strategy 2 found {len(fit_elements)} text matches.")
+            
+            # If we found text matches but no table, we try to parse the match parent
+            for text_node in fit_elements:
+                event_name = text_node.strip().replace("FIT:", "").strip()
+                # Default "Today" since we lost the date context in this fallback mode
+                # This is just to prove we CAN see data
+                classes_data.append({
+                    "Gym": "Carla Madison",
+                    "Name": event_name,
+                    "Day": "Upcoming", 
+                    "FullDate": "Check Link",
+                    "Time": "Check Link",
+                    "Type": "Strength" if "Total" in event_name else "Cardio",
+                    "Difficulty": "Open"
+                })
+
+        # Process Strategy 1 Rows (Preferred)
+        current_date = "Upcoming"
         for row in rows:
-            # Header rows contain the date (e.g., "Monday, February 14, 2026")
+            # Check if this is a Date Header
             if "fc-list-heading" in row.get("class", []):
-                current_date = row.find("td", class_="fc-list-heading-main").get_text(strip=True)
+                date_cell = row.find("td", class_="fc-list-heading-main") or row.find("td")
+                if date_cell:
+                    current_date = date_cell.get_text(strip=True)
                 continue
             
-            # Event rows contain the class info
+            # Check if this is an Event Item
             if "fc-list-item" in row.get("class", []):
-                time_cell = row.find("td", class_="fc-list-item-time")
                 title_cell = row.find("td", class_="fc-list-item-title")
+                time_cell = row.find("td", class_="fc-list-item-time")
                 
-                time_text = time_cell.get_text(strip=True) if time_cell else "N/A"
-                title_text = title_cell.get_text(strip=True) if title_cell else "Unknown"
-                
-                # --- FILTER PROTOCOL: ONLY "FIT" CLASSES ---
-                if "FIT" in title_text.upper():
-                    # Parse "FIT: Body Pump" -> "Body Pump"
-                    clean_name = title_text.replace("FIT:", "").replace("FIT", "").strip()
+                if title_cell:
+                    title_text = title_cell.get_text(strip=True)
+                    time_text = time_cell.get_text(strip=True) if time_cell else "N/A"
                     
-                    # Determine Category based on keywords
-                    category = "Strength" # Default
-                    if any(x in clean_name.upper() for x in ["YOGA", "PILATES", "STRETCH"]):
-                        category = "Yoga"
-                    elif any(x in clean_name.upper() for x in ["CYCLE", "ZUMBA", "HIIT", "CARDIO"]):
-                        category = "Cardio"
-                    elif "AQUA" in clean_name.upper():
-                        category = "Water"
+                    if "FIT" in title_text.upper():
+                        clean_name = title_text.replace("FIT:", "").replace("FIT", "").strip()
+                        
+                        # Categorize
+                        category = "Strength"
+                        if any(x in clean_name.upper() for x in ["YOGA", "PILATES", "STRETCH"]): category = "Yoga"
+                        elif any(x in clean_name.upper() for x in ["CYCLE", "ZUMBA", "HIIT", "CARDIO", "KICK"]): category = "Cardio"
+                        elif "AQUA" in clean_name.upper(): category = "Water"
 
-                    classes_data.append({
-                        "Gym": "Carla Madison",
-                        "Name": clean_name,
-                        "Day": current_date.split(',')[0], # Just "Monday"
-                        "FullDate": current_date,
-                        "Time": time_text,
-                        "Type": category,
-                        "Difficulty": "Open" # Default
-                    })
-                    print(f"✅ Found: {clean_name} on {current_date}")
-
-        return classes_data
+                        classes_data.append({
+                            "Gym": "Carla Madison",
+                            "Name": clean_name,
+                            "Day": current_date.split(',')[0] if ',' in current_date else current_date,
+                            "FullDate": current_date,
+                            "Time": time_text,
+                            "Type": category,
+                            "Difficulty": "Open"
+                        })
 
     except Exception as e:
-        print(f"⚠️ Error: {e}")
-        return []
+        print(f"❌ Critical Error: {e}")
         
     finally:
         driver.quit()
+        
+    return classes_data
 
 if __name__ == "__main__":
     data = scrape_schedule()
     
-    # Save even if empty (updates the file timestamp)
+    # Create DataFrame
     df = pd.DataFrame(data)
-    # Ensure columns exist even if no data found
+    
+    # If empty, create dummy row so CSV isn't invalid
     if df.empty:
-        df = pd.DataFrame(columns=["Gym", "Name", "Day", "FullDate", "Time", "Type", "Difficulty"])
-        
+        print("⚠️ No classes found! Saving empty placeholder.")
+        df = pd.DataFrame([{
+            "Gym": "Carla Madison", "Name": "No Classes Found (Debug)", 
+            "Day": "Today", "FullDate": "Today", "Time": "00:00", 
+            "Type": "Strength", "Difficulty": "Error"
+        }])
+    
     df.to_csv("fitness_schedule.csv", index=False)
-    print("💾 Schedule saved to fitness_schedule.csv")
+    print(f"💾 Schedule saved with {len(data)} classes.")
