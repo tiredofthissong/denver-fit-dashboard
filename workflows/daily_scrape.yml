@@ -1,46 +1,42 @@
 name: Daily Schedule Update
 
 on:
-  workflow_dispatch:      # Allows manual click
   schedule:
-    - cron: '0 11 * * *'  # Runs daily at 4am Denver time
+    - cron: '0 11 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  scrape-and-report:
+  scrape:
     runs-on: ubuntu-latest
     
     steps:
-      - name: 1. Checkout Code
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: 2. Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
-      - name: 3. Install Libraries
-        run: pip install pandas selenium webdriver-manager beautifulsoup4
+      # --- NEW STEP: Install Google Chrome ---
+      - name: Install Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
 
-      - name: 4. Run Scraper
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Scraper
         run: python scrape.py
 
-      - name: 5. Save Artifacts (Debug)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: debug-evidence
-          path: |
-            fitness_schedule.csv
-            debug_screenshot.png
-            debug_source.html
-
-      - name: 6. Commit Results
+      - name: Commit Results
         run: |
           git config --global user.name "FitnessBot"
           git config --global user.email "bot@example.com"
           git add fitness_schedule.csv
-          git commit -m "Update schedule" || echo "No changes to commit"
+          git commit -m "Update schedule [skip ci]" || echo "No changes to commit"
           git push
