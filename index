@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Denver Rec Class Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+        body { background-color: #f3f4f6; }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <div x-data="classScheduler()" class="max-w-6xl mx-auto p-6">
+        
+        <header class="mb-8 text-center sm:text-left sm:flex sm:justify-between sm:items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-900 tracking-tight">🏋️ Ready. Set. Lift.</h1>
+                <p class="text-slate-500 mt-1">Denver Rec Center Class Availability</p>
+            </div>
+            
+            <div class="mt-4 sm:mt-0 flex gap-2">
+                <select x-model="selectedGym" class="px-4 py-2 rounded-lg border border-gray-300 bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                    <option value="all">All Gyms</option>
+                    <option value="Carla Madison">Carla Madison</option>
+                    <option value="Central Park">Central Park</option>
+                    <option value="Washington Park">Washington Park</option>
+                </select>
+                
+                <select x-model="selectedType" class="px-4 py-2 rounded-lg border border-gray-300 bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                    <option value="all">All Class Types</option>
+                    <option value="Cardio">Cardio / HIIT</option>
+                    <option value="Strength">Strength</option>
+                    <option value="Yoga">Yoga / Recovery</option>
+                    <option value="Water">Aquatics</option>
+                </select>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-indigo-600 rounded-xl p-6 text-white shadow-lg shadow-indigo-200">
+                <div class="text-indigo-200 text-sm font-semibold uppercase tracking-wider">Weekly Volume</div>
+                <div class="text-4xl font-bold mt-1" x-text="filteredClasses.length"></div>
+                <div class="text-indigo-100 text-sm mt-1">Available Classes</div>
+            </div>
+            <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+                <div class="text-gray-400 text-sm font-semibold uppercase tracking-wider">Top Category</div>
+                <div class="text-4xl font-bold mt-1 text-gray-800">Strength</div>
+                <div class="text-gray-500 text-sm mt-1">Primary Focus</div>
+            </div>
+             <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm relative overflow-hidden">
+                <div class="text-gray-400 text-sm font-semibold uppercase tracking-wider">Next Session</div>
+                <div class="text-2xl font-bold mt-2 text-gray-800" x-text="nextClass ? nextClass.name : 'No classes soon'"></div>
+                <div class="text-green-600 text-sm font-medium mt-1" x-text="nextClass ? 'Starts at ' + nextClass.time : ''"></div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <template x-for="cls in filteredClasses" :key="cls.id">
+                <div class="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300 group">
+                    <div class="h-2 w-full" :class="{
+                        'bg-red-500': cls.type === 'Cardio',
+                        'bg-blue-500': cls.type === 'Strength',
+                        'bg-emerald-500': cls.type === 'Yoga',
+                        'bg-cyan-400': cls.type === 'Water'
+                    }"></div>
+                    
+                    <div class="p-6">
+                        <div class="flex justify-between items-start">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800" x-text="cls.gym"></span>
+                            <span class="text-sm font-mono text-gray-500" x-text="cls.time"></span>
+                        </div>
+                        
+                        <h3 class="mt-3 text-lg font-bold text-gray-900 group-hover:text-indigo-600 transition-colors" x-text="cls.name"></h3>
+                        
+                        <div class="mt-4 flex items-center text-sm text-gray-500">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <span x-text="cls.day"></span>
+                        </div>
+
+                        <div class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
+                            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wide" x-text="cls.difficulty"></span>
+                            <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">Add to Calendar &rarr;</button>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <div x-show="filteredClasses.length === 0" class="text-center py-20 text-gray-500" x-cloak>
+            <p class="text-xl">No classes found for these filters.</p>
+            <button @click="resetFilters()" class="mt-4 text-indigo-600 underline">Reset Filters</button>
+        </div>
+    </div>
+
+    <script>
+        function classScheduler() {
+            return {
+                selectedGym: 'all',
+                selectedType: 'all',
+                
+                // MOCK DATA - Replace this with a fetch() call to a Google Sheet CSV later if needed
+                classes: [
+                    { id: 1, name: 'Total Body Conditioning', gym: 'Carla Madison', time: '5:30 PM', day: 'Monday', type: 'Strength', difficulty: 'Intermediate' },
+                    { id: 2, name: 'Vinyasa Yoga', gym: 'Carla Madison', time: '6:45 PM', day: 'Monday', type: 'Yoga', difficulty: 'All Levels' },
+                    { id: 3, name: 'HIIT Cycle', gym: 'Central Park', time: '6:00 AM', day: 'Tuesday', type: 'Cardio', difficulty: 'Advanced' },
+                    { id: 4, name: 'Power Lunch Strength', gym: 'Washington Park', time: '12:00 PM', day: 'Tuesday', type: 'Strength', difficulty: 'Intermediate' },
+                    { id: 5, name: 'Aqua Aerobics', gym: 'Central Park', time: '10:00 AM', day: 'Wednesday', type: 'Water', difficulty: 'Beginner' },
+                    { id: 6, name: 'Zumba', gym: 'Carla Madison', time: '5:30 PM', day: 'Wednesday', type: 'Cardio', difficulty: 'All Levels' },
+                    { id: 7, name: 'Barre Sculpt', gym: 'Carla Madison', time: '9:00 AM', day: 'Saturday', type: 'Strength', difficulty: 'Intermediate' },
+                    { id: 8, name: 'Restorative Yoga', gym: 'Washington Park', time: '10:00 AM', day: 'Sunday', type: 'Yoga', difficulty: 'Beginner' },
+                ],
+
+                get filteredClasses() {
+                    return this.classes.filter(c => {
+                        const gymMatch = this.selectedGym === 'all' || c.gym === this.selectedGym;
+                        const typeMatch = this.selectedType === 'all' || c.type === this.selectedType;
+                        return gymMatch && typeMatch;
+                    });
+                },
+
+                get nextClass() {
+                    // Simple logic to just show the first available class in the list for demo
+                    return this.filteredClasses.length > 0 ? this.filteredClasses[0] : null;
+                },
+
+                resetFilters() {
+                    this.selectedGym = 'all';
+                    this.selectedType = 'all';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
