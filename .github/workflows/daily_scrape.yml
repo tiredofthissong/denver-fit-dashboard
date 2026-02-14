@@ -1,0 +1,38 @@
+name: Daily Schedule Update
+
+on:
+  schedule:
+    # Runs at 11:00 UTC (which is 4:00 AM Denver Time)
+    - cron: '0 11 * * *'
+  workflow_dispatch: # Allows you to run it manually via button click
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: |
+          pip install pandas selenium webdriver-manager beautifulsoup4
+
+      - name: Run Scraper
+        run: python scrape.py
+
+      - name: Commit and Push Data
+        run: |
+          git config --global user.name "FitnessBot"
+          git config --global user.email "bot@example.com"
+          git add fitness_schedule.csv
+          git commit -m "Update class schedule [skip ci]" || echo "No changes to commit"
+          git push
