@@ -75,7 +75,7 @@
     </style>
 </head>
 <body>
-<div x-data="app()">
+<div x-data="app()" x-init="init()">
     <header class="header">
         <div class="header-inner">
             <div class="brand">
@@ -137,7 +137,7 @@
                                         <span x-show="cls.Price!=='Free'" style="color:var(--green)" x-text="cls.Price"></span>
                                     </div>
                                     <div class="card-footer">
-                                        <span class="status" :class="'status-'+(cls.Status||'open').toLowerCase().replace(' ','-')" x-text="cls.Status||'Open'"></span>
+                                        <span class="status" :class="'status-'+cls.Status.toLowerCase().replace(' ','-')" x-text="cls.Status"></span>
                                         <div class="card-actions">
                                             <a :href="calLink(cls)" target="_blank" class="btn btn-cal" title="Add to Google Calendar">📅</a>
                                             <a :href="cls.Link" target="_blank" class="btn btn-primary" :class="{disabled:cls.Status==='Full'}">
@@ -169,7 +169,7 @@
                                 <span x-show="cls.Price!=='Free'" style="color:var(--green)" x-text="cls.Price"></span>
                             </div>
                             <div class="card-footer">
-                                <span class="status" :class="'status-'+(cls.Status||'open').toLowerCase().replace(' ','-')" x-text="cls.Status||'Open'"></span>
+                                <span class="status" :class="'status-'+cls.Status.toLowerCase().replace(' ','-')" x-text="cls.Status"></span>
                                 <div class="card-actions">
                                     <a :href="calLink(cls)" target="_blank" class="btn btn-cal" title="Add to Google Calendar">📅</a>
                                     <a :href="cls.Link" target="_blank" class="btn btn-primary" :class="{disabled:cls.Status==='Full'}">
@@ -193,19 +193,8 @@ function app(){
         filter:'All',
         view:'day',
         classes:[],
-        lastSync:null,
-        // Verified: URL Correct
         csvUrl:'https://raw.githubusercontent.com/tiredofthissong/denver-fit-dashboard/main/fitness_schedule.csv',
         location:'Carla Madison Rec Center, 2401 E Colfax Ave, Denver, CO 80206',
-
-        get lastUpdated(){
-            if(!this.lastSync)return 'Syncing...';
-            const now=new Date();
-            const diff=now-this.lastSync;
-            const mins=Math.floor(diff/60000);
-            if(mins<1)return 'Just now';
-            return `${mins}m ago`;
-        },
 
         get categories(){
             const cats=[...new Set(this.classes.map(c=>c.Category).filter(Boolean))];
@@ -290,35 +279,19 @@ function app(){
         },
 
         init(){
-            // Attempt to get last sync time, fail gracefully if API limit hit
-            fetch('https://api.github.com/repos/tiredofthissong/denver-fit-dashboard/commits?path=fitness_schedule.csv&per_page=1')
-                .then(r=>r.json())
-                .then(commits=>{
-                    if(commits[0]&&commits[0].commit){
-                        this.lastSync=new Date(commits[0].commit.author.date);
-                    }
-                })
-                .catch(()=>this.lastSync=new Date());
-
             Papa.parse(this.csvUrl,{
                 download:true,header:true,skipEmptyLines:true,
                 complete:res=>{
                     if(res.data&&res.data.length>0){
-                        // Fallback logic in case CSV is old format
-                        this.classes=res.data.filter(r=>r.Name&&r.Name.trim()).map(r => ({
-                            ...r,
-                            Status: r.Status || 'Open',
-                            Price: r.Price || 'Free',
-                            Category: r.Category || r.Type || 'Fitness' // Fallback for old CSV schema
-                        }));
+                        this.classes=res.data.filter(r=>r.Name&&r.Name.trim());
                         this.loading=false;
                     }else{
-                        this.error='Schedule Empty. Please check the Scraper Action logs.';
+                        this.error='Schedule CSV not found. Push fitness_schedule.csv to GitHub and run the workflow.';
                         this.loading=false;
                     }
                 },
                 error:()=>{
-                    this.error='Could not load schedule. Please wait for the Scraper to finish.';
+                    this.error='Schedule not synced yet. Run Actions → Daily Schedule Scrape to generate it.';
                     this.loading=false;
                 }
             });
