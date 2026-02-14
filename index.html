@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>CarlaFit — Carla Madison Rec Schedule</title>
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Alpine.js + PapaParse -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #0a0a0a;
+            --surface: #161616;
+            --surface-hover: #1c1c1c;
+            --border: #2a2a2a;
+            --text: #fafafa;
+            --text-secondary: #a0a0a0;
+            --text-muted: #666;
+            --accent: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.15);
+            --green: #22c55e;
+            --orange: #f97316;
+            --red: #ef4444;
+            --cyan: #06b6d4;
+            --pink: #ec4899;
+            --yellow: #eab308;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100dvh;
+            overflow-x: hidden;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 0; height: 0; }
+
+        /* === HEADER === */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        .header-inner {
+            padding: 16px 20px 0;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .brand h1 {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .brand h1 span { color: var(--accent); }
+        .brand-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .status-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* === FILTERS === */
+        .filters {
+            display: flex;
+            gap: 8px;
+            padding: 14px 20px 14px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scroll-snap-type: x mandatory;
+        }
+        .filter-btn {
+            flex-shrink: 0;
+            scroll-snap-align: start;
+            padding: 8px 18px;
+            border-radius: 100px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .filter-btn:active { transform: scale(0.95); }
+        .filter-btn.active {
+            background: var(--text);
+            color: var(--bg);
+            border-color: var(--text);
+        }
+
+        /* Day quick nav */
+        .day-nav {
+            display: flex;
+            gap: 4px;
+            padding: 0 20px 14px;
+            overflow-x: auto;
+        }
+        .day-btn {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 48px;
+        }
+        .day-btn .day-num {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .day-btn.active {
+            background: var(--accent-glow);
+            border-color: var(--accent);
+        }
+        .day-btn.active .day-num { color: var(--accent); }
+        .day-btn.active { color: var(--accent); }
+        .day-btn.today .day-num { color: var(--text); }
+
+        /* === MAIN CONTENT === */
+        .content {
+            padding: 8px 16px 120px;
+        }
+
+        /* Section label */
+        .section-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 4px 8px;
+        }
+
+        /* === CLASS CARDS === */
+        .class-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 10px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.15s ease, background 0.15s ease;
+        }
+        .class-card:active {
+            transform: scale(0.98);
+            background: var(--surface-hover);
+        }
+
+        /* Accent stripe */
+        .card-stripe {
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 3px;
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .card-name {
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.3;
+            padding-right: 12px;
+            color: var(--text);
+        }
+        .card-tag {
+            flex-shrink: 0;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .meta-icon {
+            width: 14px; height: 14px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+        .meta-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .card-price {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--green);
+        }
+        .card-price.paid { color: var(--text-secondary); }
+
+        .card-status {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+        .status-open { background: rgba(34,197,94,0.1); color: var(--green); }
+        .status-full { background: rgba(239,68,68,0.1); color: var(--red); }
+        .status-progress { background: rgba(249,115,22,0.1); color: var(--orange); }
+        .status-waitlist { background: rgba(234,179,8,0.1); color: var(--yellow); }
+
+        .book-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            background: var(--accent);
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+        .book-btn:active { transform: scale(0.95); }
+        .book-btn.disabled {
+            background: var(--border);
+            color: var(--text-muted);
+            box-shadow: none;
+            pointer-events: none;
+        }
+
+        /* Category colors */
+        .cat-fitness .card-stripe { background: var(--accent); }
+        .cat-fitness .card-tag { background: rgba(99,102,241,0.12); color: #818cf8; }
+
+        .cat-cardio .card-stripe { background: var(--orange); }
+        .cat-cardio .card-tag { background: rgba(249,115,22,0.12); color: var(--orange); }
+
+        .cat-strength .card-stripe { background: var(--pink); }
+        .cat-strength .card-tag { background: rgba(236,72,153,0.12); color: var(--pink); }
+
+        .cat-yoga .card-stripe,
+        .cat-mind-body .card-stripe { background: var(--green); }
+        .cat-yoga .card-tag,
+        .cat-mind-body .card-tag { background: rgba(34,197,94,0.12); color: var(--green); }
+
+        .cat-aqua .card-stripe { background: var(--cyan); }
+        .cat-aqua .card-tag { background: rgba(6,182,212,0.12); color: var(--cyan); }
+
+        .cat-sports .card-stripe { background: var(--yellow); }
+        .cat-sports .card-tag { background: rgba(234,179,8,0.12); color: var(--yellow); }
+
+        .cat-active-older-adults .card-stripe { background: #a78bfa; }
+        .cat-active-older-adults .card-tag { background: rgba(167,139,250,0.12); color: #a78bfa; }
+
+        .cat-open-gym .card-stripe { background: var(--text-muted); }
+        .cat-open-gym .card-tag { background: rgba(102,102,102,0.15); color: var(--text-secondary); }
+
+        /* === LOADING / EMPTY === */
+        .loading-state, .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .spinner {
+            width: 32px; height: 32px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .empty-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+        .empty-text {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* === COUNTER BAR === */
+        .counter-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 4px 4px;
+        }
+        .counter {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .counter strong {
+            color: var(--text-secondary);
+            font-weight: 700;
+        }
+
+        /* === SEARCH === */
+        .search-wrap {
+            padding: 0 20px 10px;
+        }
+        .search-box {
+            width: 100%;
+            padding: 10px 16px 10px 40px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .search-box::placeholder { color: var(--text-muted); }
+        .search-box:focus { border-color: var(--accent); }
+        .search-wrap { position: relative; }
+        .search-icon {
+            position: absolute;
+            left: 32px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px; height: 16px;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        /* === FOOTER === */
+        .app-footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        .app-footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        /* === PWA install banner === */
+        @media (display-mode: standalone) {
+            .header { padding-top: env(safe-area-inset-top, 0px); }
+        }
+    </style>
+</head>
+
+<body>
+<div x-data="carlafit()" x-init="init()">
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-inner">
+            <div class="brand">
+                <div>
+                    <h1>Carla<span>Fit</span></h1>
+                    <p class="brand-sub">Carla Madison Rec Center</p>
+                </div>
+                <div class="status-pill">
+                    <span class="status-dot"></span>
+                    <span x-text="lastUpdated"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search -->
+        <div class="search-wrap" style="padding-top: 14px;">
+            <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <input class="search-box" type="text" placeholder="Search classes..." x-model="search" @input="resetDayFilter()">
+        </div>
+
+        <!-- Category Filters -->
+        <div class="filters">
+            <button class="filter-btn" :class="{ active: categoryFilter === 'All' }" @click="categoryFilter = 'All'">All</button>
+            <template x-for="cat in categories" :key="cat">
+                <button class="filter-btn" :class="{ active: categoryFilter === cat }" @click="categoryFilter = cat" x-text="cat"></button>
+            </template>
+        </div>
+
+        <!-- Day Quick Nav -->
+        <div class="day-nav">
+            <button class="day-btn" :class="{ active: dayFilter === 'all' }" @click="dayFilter = 'all'">
+                <span class="day-num">*</span>
+                <span>All</span>
+            </button>
+            <template x-for="d in weekDays" :key="d.abbr">
+                <button class="day-btn"
+                        :class="{ active: dayFilter === d.abbr, today: d.isToday }"
+                        @click="dayFilter = d.abbr">
+                    <span class="day-num" x-text="d.date"></span>
+                    <span x-text="d.label"></span>
+                </button>
+            </template>
+        </div>
+    </header>
+
+    <!-- CONTENT -->
+    <main class="content">
+
+        <!-- Loading -->
+        <div x-show="loading" class="loading-state">
+            <div class="spinner"></div>
+            <p class="loading-text">Loading schedule...</p>
+        </div>
+
+        <!-- Error -->
+        <div x-show="error && !loading" class="empty-state">
+            <div class="empty-icon">⚠️</div>
+            <p class="empty-text" x-text="error"></p>
+            <p style="margin-top:8px; font-size:12px; color:var(--text-muted)">
+                <a :href="directLink" target="_blank" style="color:var(--accent); text-decoration:none;">View on Denver Parks →</a>
+            </p>
+        </div>
+
+        <!-- Results -->
+        <template x-if="!loading && !error">
+            <div>
+                <div class="counter-bar">
+                    <span class="counter"><strong x-text="filtered.length"></strong> classes</span>
+                    <span class="counter" x-show="search" style="cursor:pointer; color:var(--accent);" @click="search = ''; resetDayFilter()">Clear search</span>
+                </div>
+
+                <!-- Empty filtered -->
+                <div x-show="filtered.length === 0" class="empty-state" style="padding: 40px 20px;">
+                    <div class="empty-icon">🔍</div>
+                    <p class="empty-text">No classes match your filters</p>
+                </div>
+
+                <!-- Class Cards -->
+                <template x-for="cls in filtered" :key="cls.ActivityID + cls.Day">
+                    <div class="class-card" :class="'cat-' + slugify(cls.Category)">
+                        <div class="card-stripe"></div>
+
+                        <div class="card-top">
+                            <span class="card-name" x-text="cls.Name"></span>
+                            <span class="card-tag" x-text="cls.Category"></span>
+                        </div>
+
+                        <div class="card-meta">
+                            <!-- Date -->
+                            <div class="meta-item">
+                                <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <span class="meta-label" x-text="cls.Day"></span>
+                            </div>
+                            <!-- Time -->
+                            <div class="meta-item">
+                                <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span class="meta-label" x-text="cls.Time"></span>
+                            </div>
+                            <!-- Next Date -->
+                            <div class="meta-item" x-show="cls.NextDate && cls.NextDate !== 'Check Schedule'">
+                                <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                </svg>
+                                <span class="meta-label" style="color: var(--accent);" x-text="'Next: ' + cls.NextDate"></span>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span class="card-price" :class="{ paid: cls.Price !== 'Free' }" x-text="cls.Price"></span>
+                                <span class="card-status"
+                                    :class="{
+                                        'status-open': cls.Status === 'Open',
+                                        'status-full': cls.Status === 'Full',
+                                        'status-progress': cls.Status === 'In Progress',
+                                        'status-waitlist': cls.Status === 'Waitlist'
+                                    }"
+                                    x-text="cls.Status"></span>
+                            </div>
+                            <a :href="cls.Link" target="_blank" rel="noopener"
+                               class="book-btn" :class="{ disabled: cls.Status === 'Full' }">
+                                <span x-text="cls.Status === 'Full' ? 'FULL' : 'BOOK'"></span>
+                                <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Footer -->
+                <div class="app-footer">
+                    <p>Data from <a href="https://anc.apm.activecommunities.com/denver" target="_blank">Denver Parks & Rec</a></p>
+                    <p style="margin-top:4px;">Schedule auto-updates daily</p>
+                </div>
+            </div>
+        </template>
+    </main>
+</div>
+
+<script>
+function carlafit() {
+    return {
+        loading: true,
+        error: null,
+        search: '',
+        categoryFilter: 'All',
+        dayFilter: 'all',
+        classes: [],
+        directLink: 'https://anc.apm.activecommunities.com/denver/activity/search?activity_keyword=Carla%20Madison',
+
+        // UPDATE THIS to your GitHub username
+        csvUrl: 'https://raw.githubusercontent.com/bhbreaux/denver-fit-dashboard/main/fitness_schedule.csv',
+
+        get lastUpdated() {
+            return 'Live';
+        },
+
+        get categories() {
+            const cats = [...new Set(this.classes.map(c => c.Category).filter(Boolean))];
+            // Sort with most common first
+            return cats.sort((a, b) => {
+                const countA = this.classes.filter(c => c.Category === a).length;
+                const countB = this.classes.filter(c => c.Category === b).length;
+                return countB - countA;
+            });
+        },
+
+        get weekDays() {
+            const days = [];
+            const names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const today = new Date();
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(today);
+                d.setDate(today.getDate() + i);
+                days.push({
+                    label: names[d.getDay()],
+                    abbr: names[d.getDay()],
+                    date: d.getDate(),
+                    isToday: i === 0,
+                    full: d
+                });
+            }
+            return days;
+        },
+
+        get filtered() {
+            let result = this.classes;
+
+            // Category
+            if (this.categoryFilter !== 'All') {
+                result = result.filter(c => c.Category === this.categoryFilter);
+            }
+
+            // Day filter
+            if (this.dayFilter !== 'all') {
+                result = result.filter(c => {
+                    if (!c.Day) return false;
+                    return c.Day.toLowerCase().includes(this.dayFilter.toLowerCase().substring(0, 3));
+                });
+            }
+
+            // Search
+            if (this.search.trim()) {
+                const q = this.search.trim().toLowerCase();
+                result = result.filter(c =>
+                    (c.Name || '').toLowerCase().includes(q) ||
+                    (c.Category || '').toLowerCase().includes(q) ||
+                    (c.Time || '').toLowerCase().includes(q) ||
+                    (c.Day || '').toLowerCase().includes(q)
+                );
+            }
+
+            return result;
+        },
+
+        resetDayFilter() {
+            if (this.search.trim()) {
+                this.dayFilter = 'all';
+            }
+        },
+
+        slugify(str) {
+            if (!str) return 'fitness';
+            return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        },
+
+        init() {
+            Papa.parse(this.csvUrl, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: (res) => {
+                    if (res.data && res.data.length > 0) {
+                        this.classes = res.data.filter(row => row.Name && row.Name.trim());
+                        this.loading = false;
+                    } else {
+                        this.error = 'No schedule data available yet. The scraper may still be syncing.';
+                        this.loading = false;
+                    }
+                },
+                error: (err) => {
+                    console.error('CSV load error:', err);
+                    this.error = 'Could not load schedule. Please try again later.';
+                    this.loading = false;
+                }
+            });
+        }
+    };
+}
+</script>
+</body>
+</html>
