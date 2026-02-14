@@ -1,0 +1,45 @@
+name: Daily Schedule Update
+
+on:
+  schedule:
+    - cron: '0 11 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      # --- CRITICAL FIX: Install Chrome Browser ---
+      - name: Install Google Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+
+      # --- CRITICAL FIX: Force Install Libraries ---
+      - name: Install Python Libraries
+        run: |
+          pip install --upgrade pip
+          pip install pandas selenium webdriver-manager beautifulsoup4 undetected-chromedriver
+
+      - name: Run Scraper
+        run: python scrape.py
+
+      - name: Commit Results
+        run: |
+          git config --global user.name "FitnessBot"
+          git config --global user.email "bot@example.com"
+          git add fitness_schedule.csv
+          git commit -m "Update schedule [skip ci]" || echo "No changes to commit"
+          git push
