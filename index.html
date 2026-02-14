@@ -3,12 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0a0a0a">
+
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:;">
+
     <title>CarlaFit — Schedule</title>
+    
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <style>
         *{box-sizing:border-box;margin:0;padding:0}
         :root{--bg:#0a0a0a;--surface:#161616;--border:#2a2a2a;--text:#fafafa;--text-dim:#666;--accent:#6366f1;--green:#22c55e;--orange:#f97316;--red:#ef4444;--cyan:#06b6d4;--pink:#ec4899;--yellow:#eab308;--purple:#a78bfa}
@@ -75,7 +83,7 @@
     </style>
 </head>
 <body>
-<div x-data="app()" x-init="init()">
+<div x-data="app()">
     <header class="header">
         <div class="header-inner">
             <div class="brand">
@@ -137,7 +145,7 @@
                                         <span x-show="cls.Price!=='Free'" style="color:var(--green)" x-text="cls.Price"></span>
                                     </div>
                                     <div class="card-footer">
-                                        <span class="status" :class="'status-'+cls.Status.toLowerCase().replace(' ','-')" x-text="cls.Status"></span>
+                                        <span class="status" :class="'status-'+(cls.Status||'open').toLowerCase().replace(' ','-')" x-text="cls.Status||'Open'"></span>
                                         <div class="card-actions">
                                             <a :href="calLink(cls)" target="_blank" class="btn btn-cal" title="Add to Google Calendar">📅</a>
                                             <a :href="cls.Link" target="_blank" class="btn btn-primary" :class="{disabled:cls.Status==='Full'}">
@@ -169,7 +177,7 @@
                                 <span x-show="cls.Price!=='Free'" style="color:var(--green)" x-text="cls.Price"></span>
                             </div>
                             <div class="card-footer">
-                                <span class="status" :class="'status-'+cls.Status.toLowerCase().replace(' ','-')" x-text="cls.Status"></span>
+                                <span class="status" :class="'status-'+(cls.Status||'open').toLowerCase().replace(' ','-')" x-text="cls.Status||'Open'"></span>
                                 <div class="card-actions">
                                     <a :href="calLink(cls)" target="_blank" class="btn btn-cal" title="Add to Google Calendar">📅</a>
                                     <a :href="cls.Link" target="_blank" class="btn btn-primary" :class="{disabled:cls.Status==='Full'}">
@@ -202,12 +210,8 @@ function app(){
             const now=new Date();
             const diff=now-this.lastSync;
             const mins=Math.floor(diff/60000);
-            const hrs=Math.floor(diff/3600000);
-            const days=Math.floor(diff/86400000);
             if(mins<1)return 'Just now';
-            if(mins<60)return `${mins}m ago`;
-            if(hrs<24)return `${hrs}h ago`;
-            return `${days}d ago`;
+            return `${mins}m ago`;
         },
 
         get categories(){
@@ -306,15 +310,21 @@ function app(){
                 download:true,header:true,skipEmptyLines:true,
                 complete:res=>{
                     if(res.data&&res.data.length>0){
-                        this.classes=res.data.filter(r=>r.Name&&r.Name.trim());
+                        // Fallback logic for old/new schema
+                        this.classes=res.data.filter(r=>r.Name&&r.Name.trim()).map(r => ({
+                            ...r,
+                            Status: r.Status || 'Open',
+                            Price: r.Price || 'Free',
+                            Category: r.Category || r.Type || 'Fitness'
+                        }));
                         this.loading=false;
                     }else{
-                        this.error='Schedule CSV not found. Push fitness_schedule.csv to GitHub and run the workflow.';
+                        this.error='Schedule Empty. Please check the Scraper Action logs.';
                         this.loading=false;
                     }
                 },
                 error:()=>{
-                    this.error='Schedule not synced yet. Run Actions → Daily Schedule Scrape to generate it.';
+                    this.error='Could not load schedule. Please wait for the Scraper to finish.';
                     this.loading=false;
                 }
             });
