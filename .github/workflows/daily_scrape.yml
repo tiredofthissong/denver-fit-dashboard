@@ -21,13 +21,13 @@ jobs:
         with:
           python-version: '3.9'
 
-      # --- CRITICAL FIX: Install Chrome Browser ---
+      # --- CRITICAL: Install Browser ---
       - name: Install Google Chrome
         run: |
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
 
-      # --- CRITICAL FIX: Force Install Libraries ---
+      # --- CRITICAL: Install Libraries ---
       - name: Install Python Libraries
         run: |
           pip install --upgrade pip
