@@ -193,8 +193,22 @@ function app(){
         filter:'All',
         view:'day',
         classes:[],
+        lastSync:null,
         csvUrl:'https://raw.githubusercontent.com/tiredofthissong/denver-fit-dashboard/main/fitness_schedule.csv',
         location:'Carla Madison Rec Center, 2401 E Colfax Ave, Denver, CO 80206',
+
+        get lastUpdated(){
+            if(!this.lastSync)return 'Syncing...';
+            const now=new Date();
+            const diff=now-this.lastSync;
+            const mins=Math.floor(diff/60000);
+            const hrs=Math.floor(diff/3600000);
+            const days=Math.floor(diff/86400000);
+            if(mins<1)return 'Just now';
+            if(mins<60)return `${mins}m ago`;
+            if(hrs<24)return `${hrs}h ago`;
+            return `${days}d ago`;
+        },
 
         get categories(){
             const cats=[...new Set(this.classes.map(c=>c.Category).filter(Boolean))];
@@ -279,6 +293,15 @@ function app(){
         },
 
         init(){
+            fetch('https://api.github.com/repos/tiredofthissong/denver-fit-dashboard/commits?path=fitness_schedule.csv&per_page=1')
+                .then(r=>r.json())
+                .then(commits=>{
+                    if(commits[0]&&commits[0].commit){
+                        this.lastSync=new Date(commits[0].commit.author.date);
+                    }
+                })
+                .catch(()=>this.lastSync=new Date());
+
             Papa.parse(this.csvUrl,{
                 download:true,header:true,skipEmptyLines:true,
                 complete:res=>{
