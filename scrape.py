@@ -159,13 +159,19 @@ def scrape():
         log.info(f"Loading: {TARGET_URL}")
         driver.get(TARGET_URL)
 
-        # Wait for results to appear
-        WebDriverWait(driver, 15).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "a[href*='/activity/']"))
-        )
-        time.sleep(3)  # Extra buffer for JS rendering
+        # Wait for page to load
+        try:
+            WebDriverWait(driver, 15).until(
+                EC.presence_of_element_located((By.TAG_NAME, "body"))
+            )
+            log.info("Page loaded successfully")
+        except:
+            log.warning("Page load timeout, continuing anyway")
 
-        # Scroll to load all results (the page may lazy-load)
+        time.sleep(4)  # Extra buffer for JS rendering
+
+        # Scroll to load all results
+        log.info("Scrolling to load lazy-loaded results...")
         scroll_to_load_all(driver, pause=1.5, max_scrolls=20)
 
         soup = BeautifulSoup(driver.page_source, "html.parser")
@@ -173,6 +179,13 @@ def scrape():
         # Find all activity links — these are the primary anchors
         activity_links = soup.find_all("a", href=re.compile(r"/activity/search/detail/\d+"))
         log.info(f"Found {len(activity_links)} activity links")
+
+        if len(activity_links) == 0:
+            log.warning("No activity links found. Trying alternate selectors...")
+            # Try broader search
+            all_links = soup.find_all("a", href=True)
+            activity_links = [l for l in all_links if "activity" in l.get("href", "").lower()]
+            log.info(f"Alternate search found {len(activity_links)} links")
 
         seen_ids = set()
 
@@ -282,9 +295,18 @@ def scrape():
 
     except Exception as e:
         log.error(f"Scrape failed: {e}", exc_info=True)
+        log.warning("Scraping failed — CSV will not update this run")
 
     finally:
-        driver.quit()
+        try:
+            driver.quit()
+        except:
+            pass
+
+    if len(classes) == 0:
+        log.warning("No classes extracted. Check website structure.")
+    else:
+        log.info(f"Success: {len(classes)} classes extracted")
 
     return classes
 
@@ -294,18 +316,34 @@ def write_csv(classes: list[dict]):
         "Name", "Day", "Time", "NextDate", "Category",
         "ActivityID", "Link", "Status", "Price", "DateRange"
     ]
-    with open(OUTPUT_FILE, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
-        writer.writeheader()
-        writer.writerows(classes)
-    log.info(f"Wrote {len(classes)} rows to {OUTPUT_FILE}")
+    try:
+        with open(OUTPUT_FILE, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
+            writer.writeheader()
+            writer.writerows(classes)
+        log.info(f"✓ Wrote {len(classes)} rows to {OUTPUT_FILE}")
+        return True
+    except Exception as e:
+        log.error(f"Failed to write CSV: {e}")
+        return False
 
 
 if __name__ == "__main__":
+    print("=" * 60)
+    print("CarlaFit Scraper v2.0 — Starting")
+    print("=" * 60)
+
     data = scrape()
-    if data:
-        write_csv(data)
+
+    if data and len(data) > 0:
+        success = write_csv(data)
+        if success:
+            print("\n" + "=" * 60)
+            print(f"✓ SUCCESS: {len(data)} classes scraped and saved")
+            print("=" * 60)
+        else:
+            print("\n✗ ERROR: Failed to write CSV")
     else:
-        log.warning("No data scraped — writing empty CSV with headers")
-        write_csv([])
-    print("✓ Scrape complete")
+        print("\n✗ WARNING: No classes found — CSV will not be updated")
+        print("Check the website structure or network connectivity")
+        print("Previous CSV remains unchanged")
