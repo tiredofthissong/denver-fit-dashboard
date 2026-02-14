@@ -204,10 +204,10 @@ def scrape():
                 continue
 
             # --- EXTRACT CLASS NAME ---
-            # The link text is typically the class name
             raw_name = link.get_text(strip=True)
-            # Clean up: remove "@ Carla Madison" suffix and "FIT:" / "AOA:" prefixes
-            clean_name = re.sub(r"\s*@\s*Carla\s*Madison.*", "", raw_name, flags=re.IGNORECASE).strip()
+            # Clean: remove "@ Carla Madison" suffix, "FIT:"/"AOA:" prefixes
+            clean_name = re.sub(r"\s*@\s*Carla\s*Madison.*", "", raw_name, flags=re.IGNORECASE)
+            clean_name = re.sub(r"^(FIT|AOA):\s*", "", clean_name, flags=re.IGNORECASE).strip()
 
             # --- EXTRACT TIME ---
             time_match = re.search(

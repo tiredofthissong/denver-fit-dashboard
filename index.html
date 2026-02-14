@@ -4,689 +4,292 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0a0a0a">
-    <title>CarlaFit — Carla Madison Rec Schedule</title>
-    <link rel="manifest" href="manifest.json">
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <!-- Alpine.js + PapaParse -->
+    <title>CarlaFit — Schedule</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        :root {
-            --bg: #0a0a0a;
-            --surface: #161616;
-            --surface-hover: #1c1c1c;
-            --border: #2a2a2a;
-            --text: #fafafa;
-            --text-secondary: #a0a0a0;
-            --text-muted: #666;
-            --accent: #6366f1;
-            --accent-glow: rgba(99, 102, 241, 0.15);
-            --green: #22c55e;
-            --orange: #f97316;
-            --red: #ef4444;
-            --cyan: #06b6d4;
-            --pink: #ec4899;
-            --yellow: #eab308;
-            --radius: 16px;
-            --radius-sm: 10px;
-            --safe-bottom: env(safe-area-inset-bottom, 0px);
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            -webkit-tap-highlight-color: transparent;
-            -webkit-font-smoothing: antialiased;
-            min-height: 100dvh;
-            overflow-x: hidden;
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 0; height: 0; }
-
-        /* === HEADER === */
-        .header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: rgba(10, 10, 10, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-        }
-        .header-inner {
-            padding: 16px 20px 0;
-        }
-        .brand {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .brand h1 {
-            font-size: 22px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-        .brand h1 span { color: var(--accent); }
-        .brand-sub {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 2px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-        .status-pill {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 6px 12px;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-        .status-dot {
-            width: 6px; height: 6px;
-            border-radius: 50%;
-            background: var(--green);
-            animation: pulse-dot 2s ease-in-out infinite;
-        }
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-
-        /* === FILTERS === */
-        .filters {
-            display: flex;
-            gap: 8px;
-            padding: 14px 20px 14px;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            scroll-snap-type: x mandatory;
-        }
-        .filter-btn {
-            flex-shrink: 0;
-            scroll-snap-align: start;
-            padding: 8px 18px;
-            border-radius: 100px;
-            border: 1px solid var(--border);
-            background: transparent;
-            color: var(--text-muted);
-            font-size: 13px;
-            font-weight: 600;
-            font-family: inherit;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-        }
-        .filter-btn:active { transform: scale(0.95); }
-        .filter-btn.active {
-            background: var(--text);
-            color: var(--bg);
-            border-color: var(--text);
-        }
-
-        /* Day quick nav */
-        .day-nav {
-            display: flex;
-            gap: 4px;
-            padding: 0 20px 14px;
-            overflow-x: auto;
-        }
-        .day-btn {
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            padding: 8px 12px;
-            border-radius: var(--radius-sm);
-            border: 1px solid transparent;
-            background: transparent;
-            color: var(--text-muted);
-            font-family: inherit;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            min-width: 48px;
-        }
-        .day-btn .day-num {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-secondary);
-        }
-        .day-btn.active {
-            background: var(--accent-glow);
-            border-color: var(--accent);
-        }
-        .day-btn.active .day-num { color: var(--accent); }
-        .day-btn.active { color: var(--accent); }
-        .day-btn.today .day-num { color: var(--text); }
-
-        /* === MAIN CONTENT === */
-        .content {
-            padding: 8px 16px 120px;
-        }
-
-        /* Section label */
-        .section-label {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 12px 4px 8px;
-        }
-
-        /* === CLASS CARDS === */
-        .class-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 16px;
-            margin-bottom: 10px;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.15s ease, background 0.15s ease;
-        }
-        .class-card:active {
-            transform: scale(0.98);
-            background: var(--surface-hover);
-        }
-
-        /* Accent stripe */
-        .card-stripe {
-            position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 3px;
-        }
-
-        .card-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
-        }
-        .card-name {
-            font-size: 15px;
-            font-weight: 700;
-            line-height: 1.3;
-            padding-right: 12px;
-            color: var(--text);
-        }
-        .card-tag {
-            flex-shrink: 0;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            padding: 4px 10px;
-            border-radius: 6px;
-        }
-
-        .card-meta {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .meta-icon {
-            width: 14px; height: 14px;
-            color: var(--text-muted);
-            flex-shrink: 0;
-        }
-        .meta-label {
-            font-size: 13px;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 14px;
-            padding-top: 12px;
-            border-top: 1px solid var(--border);
-        }
-
-        .card-price {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--green);
-        }
-        .card-price.paid { color: var(--text-secondary); }
-
-        .card-status {
-            font-size: 11px;
-            font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 6px;
-        }
-        .status-open { background: rgba(34,197,94,0.1); color: var(--green); }
-        .status-full { background: rgba(239,68,68,0.1); color: var(--red); }
-        .status-progress { background: rgba(249,115,22,0.1); color: var(--orange); }
-        .status-waitlist { background: rgba(234,179,8,0.1); color: var(--yellow); }
-
-        .book-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 10px 20px;
-            border-radius: var(--radius-sm);
-            background: var(--accent);
-            color: white;
-            font-size: 13px;
-            font-weight: 700;
-            text-decoration: none;
-            transition: all 0.15s ease;
-            box-shadow: 0 4px 12px var(--accent-glow);
-        }
-        .book-btn:active { transform: scale(0.95); }
-        .book-btn.disabled {
-            background: var(--border);
-            color: var(--text-muted);
-            box-shadow: none;
-            pointer-events: none;
-        }
-
-        /* Category colors */
-        .cat-fitness .card-stripe { background: var(--accent); }
-        .cat-fitness .card-tag { background: rgba(99,102,241,0.12); color: #818cf8; }
-
-        .cat-cardio .card-stripe { background: var(--orange); }
-        .cat-cardio .card-tag { background: rgba(249,115,22,0.12); color: var(--orange); }
-
-        .cat-strength .card-stripe { background: var(--pink); }
-        .cat-strength .card-tag { background: rgba(236,72,153,0.12); color: var(--pink); }
-
-        .cat-yoga .card-stripe,
-        .cat-mind-body .card-stripe { background: var(--green); }
-        .cat-yoga .card-tag,
-        .cat-mind-body .card-tag { background: rgba(34,197,94,0.12); color: var(--green); }
-
-        .cat-aqua .card-stripe { background: var(--cyan); }
-        .cat-aqua .card-tag { background: rgba(6,182,212,0.12); color: var(--cyan); }
-
-        .cat-sports .card-stripe { background: var(--yellow); }
-        .cat-sports .card-tag { background: rgba(234,179,8,0.12); color: var(--yellow); }
-
-        .cat-active-older-adults .card-stripe { background: #a78bfa; }
-        .cat-active-older-adults .card-tag { background: rgba(167,139,250,0.12); color: #a78bfa; }
-
-        .cat-open-gym .card-stripe { background: var(--text-muted); }
-        .cat-open-gym .card-tag { background: rgba(102,102,102,0.15); color: var(--text-secondary); }
-
-        /* === LOADING / EMPTY === */
-        .loading-state, .empty-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 60px 20px;
-            text-align: center;
-        }
-        .spinner {
-            width: 32px; height: 32px;
-            border: 3px solid var(--border);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-bottom: 16px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .loading-text {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-        .empty-icon {
-            font-size: 40px;
-            margin-bottom: 12px;
-        }
-        .empty-text {
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-
-        /* === COUNTER BAR === */
-        .counter-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 4px 4px;
-        }
-        .counter {
-            font-size: 13px;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-        .counter strong {
-            color: var(--text-secondary);
-            font-weight: 700;
-        }
-
-        /* === SEARCH === */
-        .search-wrap {
-            padding: 0 20px 10px;
-        }
-        .search-box {
-            width: 100%;
-            padding: 10px 16px 10px 40px;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border);
-            background: var(--surface);
-            color: var(--text);
-            font-size: 14px;
-            font-family: inherit;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .search-box::placeholder { color: var(--text-muted); }
-        .search-box:focus { border-color: var(--accent); }
-        .search-wrap { position: relative; }
-        .search-icon {
-            position: absolute;
-            left: 32px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 16px; height: 16px;
-            color: var(--text-muted);
-            pointer-events: none;
-        }
-
-        /* === FOOTER === */
-        .app-footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-        .app-footer a {
-            color: var(--accent);
-            text-decoration: none;
-        }
-
-        /* === PWA install banner === */
-        @media (display-mode: standalone) {
-            .header { padding-top: env(safe-area-inset-top, 0px); }
-        }
+        *{box-sizing:border-box;margin:0;padding:0}
+        :root{--bg:#0a0a0a;--surface:#161616;--border:#2a2a2a;--text:#fafafa;--text-dim:#666;--accent:#6366f1;--green:#22c55e;--orange:#f97316;--red:#ef4444;--cyan:#06b6d4;--pink:#ec4899;--yellow:#eab308;--purple:#a78bfa}
+        body{font-family:Inter,-apple-system,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;min-height:100dvh;overflow-x:hidden}
+        ::-webkit-scrollbar{width:0}
+        .header{position:sticky;top:0;z-index:100;background:rgba(10,10,10,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+        .header-inner{padding:14px 20px}
+        .brand{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+        .brand h1{font-size:20px;font-weight:800;letter-spacing:-.5px}
+        .brand h1 span{color:var(--accent)}
+        .address{font-size:11px;color:var(--text-dim);margin-top:2px}
+        .address a{color:var(--cyan);text-decoration:none}
+        .view-toggle{display:flex;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px}
+        .view-btn{padding:6px 14px;border:none;background:transparent;color:var(--text-dim);font-size:12px;font-weight:600;border-radius:6px;cursor:pointer;font-family:inherit;transition:.2s}
+        .view-btn.active{background:var(--text);color:var(--bg)}
+        .filters{display:flex;gap:8px;padding:12px 20px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+        .filter-btn{flex-shrink:0;padding:8px 16px;border-radius:100px;border:1px solid var(--border);background:transparent;color:var(--text-dim);font-size:13px;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;white-space:nowrap}
+        .filter-btn:active{transform:scale(.95)}
+        .filter-btn.active{background:var(--text);color:var(--bg);border-color:var(--text)}
+        .content{padding:8px 16px 100px}
+        .day-section{margin-bottom:24px}
+        .day-header{font-size:13px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:12px 4px 8px}
+        .class-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;position:relative;overflow:hidden;transition:.15s}
+        .class-card:active{transform:scale(.98);background:#1a1a1a}
+        .card-stripe{position:absolute;left:0;top:0;bottom:0;width:3px}
+        .card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+        .card-icon{font-size:24px;flex-shrink:0;margin-right:10px}
+        .card-name{font-size:15px;font-weight:700;line-height:1.3;flex:1}
+        .card-tag{flex-shrink:0;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:4px 10px;border-radius:6px}
+        .card-meta{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;font-size:13px;color:#a0a0a0}
+        .card-footer{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--border)}
+        .card-actions{display:flex;gap:8px}
+        .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;transition:.15s;border:none;cursor:pointer;font-family:inherit}
+        .btn-primary{background:var(--accent);color:#fff;box-shadow:0 4px 12px rgba(99,102,241,.15)}
+        .btn-cal{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+        .btn:active{transform:scale(.95)}
+        .btn.disabled{background:var(--border);color:var(--text-dim);pointer-events:none}
+        .status{font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px}
+        .status-open{background:rgba(34,197,94,.1);color:var(--green)}
+        .status-full{background:rgba(239,68,68,.1);color:var(--red)}
+        .status-progress{background:rgba(249,115,22,.1);color:var(--orange)}
+        .status-waitlist{background:rgba(234,179,8,.1);color:var(--yellow)}
+        .cat-strength .card-stripe{background:var(--pink)}
+        .cat-strength .card-tag{background:rgba(236,72,153,.12);color:var(--pink)}
+        .cat-cardio .card-stripe{background:var(--orange)}
+        .cat-cardio .card-tag{background:rgba(249,115,22,.12);color:var(--orange)}
+        .cat-yoga .card-stripe,.cat-mind-body .card-stripe{background:var(--green)}
+        .cat-yoga .card-tag,.cat-mind-body .card-tag{background:rgba(34,197,94,.12);color:var(--green)}
+        .cat-aqua .card-stripe{background:var(--cyan)}
+        .cat-aqua .card-tag{background:rgba(6,182,212,.12);color:var(--cyan)}
+        .cat-sports .card-stripe{background:var(--yellow)}
+        .cat-sports .card-tag{background:rgba(234,179,8,.12);color:var(--yellow)}
+        .cat-active-older-adults .card-stripe{background:var(--purple)}
+        .cat-active-older-adults .card-tag{background:rgba(167,139,250,.12);color:var(--purple)}
+        .cat-fitness .card-stripe{background:var(--accent)}
+        .cat-fitness .card-tag{background:rgba(99,102,241,.12);color:#818cf8}
+        .cat-open-gym .card-stripe{background:#666}
+        .cat-open-gym .card-tag{background:rgba(102,102,102,.15);color:#999}
+        .loading,.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center}
+        .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:16px}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .empty-text{font-size:14px;color:var(--text-dim)}
+        @media(min-width:768px){.content{max-width:900px;margin:0 auto;padding:16px 24px 100px}}
     </style>
 </head>
-
 <body>
-<div x-data="carlafit()" x-init="init()">
-
-    <!-- HEADER -->
+<div x-data="app()" x-init="init()">
     <header class="header">
         <div class="header-inner">
             <div class="brand">
                 <div>
                     <h1>Carla<span>Fit</span></h1>
-                    <p class="brand-sub">Carla Madison Rec Center</p>
+                    <p class="address">Carla Madison Rec Center · <a href="https://maps.google.com/?q=2401+E+Colfax+Ave+Denver+CO+80206" target="_blank">2401 E Colfax Ave</a></p>
                 </div>
-                <div class="status-pill">
-                    <span class="status-dot"></span>
-                    <span x-text="lastUpdated"></span>
+                <div class="view-toggle">
+                    <button class="view-btn" :class="{active:view==='day'}" @click="view='day'">Day</button>
+                    <button class="view-btn" :class="{active:view==='week'}" @click="view='week'">Week</button>
                 </div>
             </div>
         </div>
-
-        <!-- Search -->
-        <div class="search-wrap" style="padding-top: 14px;">
-            <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
-            <input class="search-box" type="text" placeholder="Search classes..." x-model="search" @input="resetDayFilter()">
-        </div>
-
-        <!-- Category Filters -->
         <div class="filters">
-            <button class="filter-btn" :class="{ active: categoryFilter === 'All' }" @click="categoryFilter = 'All'">All</button>
+            <button class="filter-btn" :class="{active:filter==='All'}" @click="filter='All'">All</button>
             <template x-for="cat in categories" :key="cat">
-                <button class="filter-btn" :class="{ active: categoryFilter === cat }" @click="categoryFilter = cat" x-text="cat"></button>
-            </template>
-        </div>
-
-        <!-- Day Quick Nav -->
-        <div class="day-nav">
-            <button class="day-btn" :class="{ active: dayFilter === 'all' }" @click="dayFilter = 'all'">
-                <span class="day-num">*</span>
-                <span>All</span>
-            </button>
-            <template x-for="d in weekDays" :key="d.abbr">
-                <button class="day-btn"
-                        :class="{ active: dayFilter === d.abbr, today: d.isToday }"
-                        @click="dayFilter = d.abbr">
-                    <span class="day-num" x-text="d.date"></span>
-                    <span x-text="d.label"></span>
-                </button>
+                <button class="filter-btn" :class="{active:filter===cat}" @click="filter=cat" x-text="cat"></button>
             </template>
         </div>
     </header>
 
-    <!-- CONTENT -->
     <main class="content">
-
-        <!-- Loading -->
-        <div x-show="loading" class="loading-state">
+        <div x-show="loading" class="loading">
             <div class="spinner"></div>
-            <p class="loading-text">Loading schedule...</p>
+            <p style="font-size:13px;color:var(--text-dim)">Loading schedule...</p>
         </div>
 
-        <!-- Error -->
-        <div x-show="error && !loading" class="empty-state">
-            <div class="empty-icon">⚠️</div>
+        <div x-show="error&&!loading" class="empty">
+            <div style="font-size:40px;margin-bottom:12px">⚠️</div>
             <p class="empty-text" x-text="error"></p>
-            <p style="margin-top:8px; font-size:12px; color:var(--text-muted)">
-                <a :href="directLink" target="_blank" style="color:var(--accent); text-decoration:none;">View on Denver Parks →</a>
-            </p>
         </div>
 
-        <!-- Results -->
-        <template x-if="!loading && !error">
+        <template x-if="!loading&&!error">
             <div>
-                <div class="counter-bar">
-                    <span class="counter"><strong x-text="filtered.length"></strong> classes</span>
-                    <span class="counter" x-show="search" style="cursor:pointer; color:var(--accent);" @click="search = ''; resetDayFilter()">Clear search</span>
+                <div x-show="filtered.length===0" class="empty">
+                    <div style="font-size:40px;margin-bottom:12px">🔍</div>
+                    <p class="empty-text">No classes match</p>
                 </div>
 
-                <!-- Empty filtered -->
-                <div x-show="filtered.length === 0" class="empty-state" style="padding: 40px 20px;">
-                    <div class="empty-icon">🔍</div>
-                    <p class="empty-text">No classes match your filters</p>
-                </div>
-
-                <!-- Class Cards -->
-                <template x-for="cls in filtered" :key="cls.ActivityID + cls.Day">
-                    <div class="class-card" :class="'cat-' + slugify(cls.Category)">
-                        <div class="card-stripe"></div>
-
-                        <div class="card-top">
-                            <span class="card-name" x-text="cls.Name"></span>
-                            <span class="card-tag" x-text="cls.Category"></span>
+                <template x-if="view==='day'">
+                    <template x-for="day in groupedByDay" :key="day.label">
+                        <div class="day-section" x-show="day.classes.length>0">
+                            <div class="day-header" x-text="day.label"></div>
+                            <template x-for="cls in day.classes" :key="cls.ActivityID">
+                                <div class="class-card" :class="'cat-'+slug(cls.Category)">
+                                    <div class="card-stripe"></div>
+                                    <div class="card-top">
+                                        <div style="display:flex;align-items:center;flex:1">
+                                            <div class="card-icon" x-text="icon(cls.Category)"></div>
+                                            <span class="card-name" x-text="clean(cls.Name)"></span>
+                                        </div>
+                                        <span class="card-tag" x-text="cls.Category"></span>
+                                    </div>
+                                    <div class="card-meta">
+                                        <span x-text="cls.Time"></span>
+                                        <span x-show="cls.Price!=='Free'" style="color:var(--green)" x-text="cls.Price"></span>
+                                    </div>
+                                    <div class="card-footer">
+                                        <span class="status" :class="'status-'+cls.Status.toLowerCase().replace(' ','-')" x-text="cls.Status"></span>
+                                        <div class="card-actions">
+                                            <a :href="calLink(cls)" target="_blank" class="btn btn-cal" title="Add to Google Calendar">📅</a>
+                                            <a :href="cls.Link" target="_blank" class="btn btn-primary" :class="{disabled:cls.Status==='Full'}">
+                                                <span x-text="cls.Status==='Full'?'FULL':'BOOK'"></span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
                         </div>
-
-                        <div class="card-meta">
-                            <!-- Date -->
-                            <div class="meta-item">
-                                <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                </svg>
-                                <span class="meta-label" x-text="cls.Day"></span>
-                            </div>
-                            <!-- Time -->
-                            <div class="meta-item">
-                                <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                <span class="meta-label" x-text="cls.Time"></span>
-                            </div>
-                            <!-- Next Date -->
-                            <div class="meta-item" x-show="cls.NextDate && cls.NextDate !== 'Check Schedule'">
-                                <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-                                </svg>
-                                <span class="meta-label" style="color: var(--accent);" x-text="'Next: ' + cls.NextDate"></span>
-                            </div>
-                        </div>
-
-                        <div class="card-footer">
-                            <div style="display:flex; align-items:center; gap:10px;">
-                                <span class="card-price" :class="{ paid: cls.Price !== 'Free' }" x-text="cls.Price"></span>
-                                <span class="card-status"
-                                    :class="{
-                                        'status-open': cls.Status === 'Open',
-                                        'status-full': cls.Status === 'Full',
-                                        'status-progress': cls.Status === 'In Progress',
-                                        'status-waitlist': cls.Status === 'Waitlist'
-                                    }"
-                                    x-text="cls.Status"></span>
-                            </div>
-                            <a :href="cls.Link" target="_blank" rel="noopener"
-                               class="book-btn" :class="{ disabled: cls.Status === 'Full' }">
-                                <span x-text="cls.Status === 'Full' ? 'FULL' : 'BOOK'"></span>
-                                <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
+                    </template>
                 </template>
 
-                <!-- Footer -->
-                <div class="app-footer">
-                    <p>Data from <a href="https://anc.apm.activecommunities.com/denver" target="_blank">Denver Parks & Rec</a></p>
-                    <p style="margin-top:4px;">Schedule auto-updates daily</p>
-                </div>
+                <template x-if="view==='week'">
+                    <template x-for="cls in filtered" :key="cls.ActivityID+cls.Day">
+                        <div class="class-card" :class="'cat-'+slug(cls.Category)">
+                            <div class="card-stripe"></div>
+                            <div class="card-top">
+                                <div style="display:flex;align-items:center;flex:1">
+                                    <div class="card-icon" x-text="icon(cls.Category)"></div>
+                                    <span class="card-name" x-text="clean(cls.Name)"></span>
+                                </div>
+                                <span class="card-tag" x-text="cls.Category"></span>
+                            </div>
+                            <div class="card-meta">
+                                <span x-text="cls.Day"></span>
+                                <span x-text="cls.Time"></span>
+                                <span x-show="cls.NextDate" style="color:var(--accent)" x-text="cls.NextDate"></span>
+                                <span x-show="cls.Price!=='Free'" style="color:var(--green)" x-text="cls.Price"></span>
+                            </div>
+                            <div class="card-footer">
+                                <span class="status" :class="'status-'+cls.Status.toLowerCase().replace(' ','-')" x-text="cls.Status"></span>
+                                <div class="card-actions">
+                                    <a :href="calLink(cls)" target="_blank" class="btn btn-cal" title="Add to Google Calendar">📅</a>
+                                    <a :href="cls.Link" target="_blank" class="btn btn-primary" :class="{disabled:cls.Status==='Full'}">
+                                        <span x-text="cls.Status==='Full'?'FULL':'BOOK'"></span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </template>
             </div>
         </template>
     </main>
 </div>
 
 <script>
-function carlafit() {
-    return {
-        loading: true,
-        error: null,
-        search: '',
-        categoryFilter: 'All',
-        dayFilter: 'all',
-        classes: [],
-        directLink: 'https://anc.apm.activecommunities.com/denver/activity/search?activity_keyword=Carla%20Madison',
+function app(){
+    return{
+        loading:true,
+        error:null,
+        filter:'All',
+        view:'day',
+        classes:[],
+        csvUrl:'https://raw.githubusercontent.com/bhbreaux/denver-fit-dashboard/main/fitness_schedule.csv',
+        location:'Carla Madison Rec Center, 2401 E Colfax Ave, Denver, CO 80206',
 
-        // UPDATE THIS to your GitHub username
-        csvUrl: 'https://raw.githubusercontent.com/bhbreaux/denver-fit-dashboard/main/fitness_schedule.csv',
-
-        get lastUpdated() {
-            return 'Live';
+        get categories(){
+            const cats=[...new Set(this.classes.map(c=>c.Category).filter(Boolean))];
+            return cats.sort((a,b)=>this.classes.filter(c=>c.Category===b).length-this.classes.filter(c=>c.Category===a).length);
         },
 
-        get categories() {
-            const cats = [...new Set(this.classes.map(c => c.Category).filter(Boolean))];
-            // Sort with most common first
-            return cats.sort((a, b) => {
-                const countA = this.classes.filter(c => c.Category === a).length;
-                const countB = this.classes.filter(c => c.Category === b).length;
-                return countB - countA;
-            });
-        },
-
-        get weekDays() {
-            const days = [];
-            const names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            const today = new Date();
-            for (let i = 0; i < 7; i++) {
-                const d = new Date(today);
-                d.setDate(today.getDate() + i);
-                days.push({
-                    label: names[d.getDay()],
-                    abbr: names[d.getDay()],
-                    date: d.getDate(),
-                    isToday: i === 0,
-                    full: d
-                });
-            }
-            return days;
-        },
-
-        get filtered() {
-            let result = this.classes;
-
-            // Category
-            if (this.categoryFilter !== 'All') {
-                result = result.filter(c => c.Category === this.categoryFilter);
-            }
-
-            // Day filter
-            if (this.dayFilter !== 'all') {
-                result = result.filter(c => {
-                    if (!c.Day) return false;
-                    return c.Day.toLowerCase().includes(this.dayFilter.toLowerCase().substring(0, 3));
-                });
-            }
-
-            // Search
-            if (this.search.trim()) {
-                const q = this.search.trim().toLowerCase();
-                result = result.filter(c =>
-                    (c.Name || '').toLowerCase().includes(q) ||
-                    (c.Category || '').toLowerCase().includes(q) ||
-                    (c.Time || '').toLowerCase().includes(q) ||
-                    (c.Day || '').toLowerCase().includes(q)
-                );
-            }
-
+        get filtered(){
+            let result=this.classes;
+            if(this.filter!=='All')result=result.filter(c=>c.Category===this.filter);
             return result;
         },
 
-        resetDayFilter() {
-            if (this.search.trim()) {
-                this.dayFilter = 'all';
+        get groupedByDay(){
+            const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+            const today=new Date();
+            const result=[];
+            for(let i=0;i<7;i++){
+                const d=new Date(today);
+                d.setDate(today.getDate()+i);
+                const dayName=days[d.getDay()];
+                const label=i===0?`Today (${dayName}, ${d.getMonth()+1}/${d.getDate()})`:`${dayName}, ${d.getMonth()+1}/${d.getDate()}`;
+                const classes=this.filtered.filter(c=>c.Day&&c.Day.includes(dayName));
+                result.push({label,classes});
             }
+            return result;
         },
 
-        slugify(str) {
-            if (!str) return 'fitness';
-            return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        slug(str){
+            return str?str.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''):'fitness';
         },
 
-        init() {
-            Papa.parse(this.csvUrl, {
-                download: true,
-                header: true,
-                skipEmptyLines: true,
-                complete: (res) => {
-                    if (res.data && res.data.length > 0) {
-                        this.classes = res.data.filter(row => row.Name && row.Name.trim());
-                        this.loading = false;
-                    } else {
-                        this.error = 'No schedule data available yet. The scraper may still be syncing.';
-                        this.loading = false;
+        clean(name){
+            return name.replace(/^(FIT|AOA):\s*/i,'').replace(/\s*@\s*Carla.*$/i,'').trim();
+        },
+
+        icon(cat){
+            const map={
+                'Strength':'💪','Cardio':'🔥','Yoga':'🧘','Mind & Body':'🧘',
+                'Aqua':'🏊','Sports':'⚽','Active Older Adults':'🌟',
+                'Fitness':'🏃','Open Gym':'🏀'
+            };
+            return map[cat]||'🏃';
+        },
+
+        calLink(cls){
+            const start=this.nextOccurrence(cls);
+            if(!start)return'#';
+            const end=new Date(start.getTime()+3600000);
+            const dates=`${this.formatDate(start)}/${this.formatDate(end)}`;
+            const text=encodeURIComponent(this.clean(cls.Name));
+            const details=encodeURIComponent(`Category: ${cls.Category}\nPrice: ${cls.Price}\nBook: ${cls.Link}`);
+            const location=encodeURIComponent(this.location);
+            return`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${dates}&location=${location}&details=${details}`;
+        },
+
+        formatDate(d){
+            const pad=n=>String(n).padStart(2,'0');
+            return`${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
+        },
+
+        nextOccurrence(cls){
+            if(!cls.Day||!cls.Time)return null;
+            const dayMap={'mon':1,'tue':2,'wed':3,'thu':4,'fri':5,'sat':6,'sun':0};
+            const firstDay=cls.Day.toLowerCase().split(',')[0].trim().slice(0,3);
+            const targetDay=dayMap[firstDay];
+            if(targetDay===undefined)return null;
+
+            const timeMatch=cls.Time.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+            if(!timeMatch)return null;
+            let hour=parseInt(timeMatch[1]);
+            const min=parseInt(timeMatch[2]);
+            if(timeMatch[3].toUpperCase()==='PM'&&hour!==12)hour+=12;
+            if(timeMatch[3].toUpperCase()==='AM'&&hour===12)hour=0;
+
+            const now=new Date();
+            const result=new Date(now);
+            result.setHours(hour,min,0,0);
+            const daysAhead=(targetDay-now.getDay()+7)%7;
+            if(daysAhead===0&&result<now)result.setDate(result.getDate()+7);
+            else result.setDate(result.getDate()+daysAhead);
+            return result;
+        },
+
+        init(){
+            Papa.parse(this.csvUrl,{
+                download:true,header:true,skipEmptyLines:true,
+                complete:res=>{
+                    if(res.data&&res.data.length>0){
+                        this.classes=res.data.filter(r=>r.Name&&r.Name.trim());
+                        this.loading=false;
+                    }else{
+                        this.error='No data available';
+                        this.loading=false;
                     }
                 },
-                error: (err) => {
-                    console.error('CSV load error:', err);
-                    this.error = 'Could not load schedule. Please try again later.';
-                    this.loading = false;
+                error:()=>{
+                    this.error='Could not load schedule';
+                    this.loading=false;
                 }
             });
         }
