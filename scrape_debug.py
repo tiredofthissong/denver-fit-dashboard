@@ -1,4 +1,4 @@
-"""Debug scraper - saves HTML to inspect actual structure"""
+"""Debug scraper - Aligned with Production Logic"""
 import time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -15,15 +15,27 @@ def setup_driver():
     opts.add_argument("--no-sandbox")
     opts.add_argument("--disable-dev-shm-usage")
     opts.add_argument("--window-size=1920,1080")
+    # MATCHING PRODUCTION: Add Real User Agent
+    opts.add_argument("user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
     return webdriver.Chrome(options=opts)
 
 print("Starting debug scraper...")
 driver = setup_driver()
 
 try:
+    print(f"Loading: {TARGET_URL}")
     driver.get(TARGET_URL)
-    print("Page loaded, waiting 8 seconds...")
-    time.sleep(8)
+
+    # MATCHING PRODUCTION: Smart Wait for Table Rows (tr)
+    print("Waiting up to 60s for table rows...")
+    try:
+        WebDriverWait(driver, 60).until(
+            EC.presence_of_element_located((By.TAG_NAME, "tr"))
+        )
+        print("✓ Element detected! Buffer wait (10s)...")
+        time.sleep(10)
+    except Exception as e:
+        print(f"✗ Timeout detected: {e}")
 
     # Save screenshot
     driver.save_screenshot("debug_screenshot.png")
@@ -37,29 +49,22 @@ try:
     # Parse and show what we find
     soup = BeautifulSoup(driver.page_source, "html.parser")
 
-    # Find all links
-    all_links = soup.find_all("a", href=True)
-    print(f"\nTotal links found: {len(all_links)}")
+    # 1. Check for Table Rows (The Main Script's Target)
+    rows = soup.find_all("tr")
+    print(f"\n[CRITICAL] Total Table Rows (tr) found: {len(rows)}")
 
-    # Show first 10 activity-related links
-    activity_links = [l for l in all_links if "activity" in l.get("href", "").lower()][:10]
-    print(f"\nFirst 10 activity links:")
-    for i, link in enumerate(activity_links, 1):
-        href = link.get("href", "")
-        text = link.get_text(strip=True)[:60]
-        print(f"{i}. {text}")
-        print(f"   URL: {href}\n")
-
-    # Check for results count
-    results_text = soup.get_text()
-    if "carla madison" in results_text.lower():
-        print("✓ 'Carla Madison' found in page text")
+    # 2. Check for Carla Madison Text
+    body_text = soup.get_text()
+    if "Carla Madison" in body_text:
+        print("✓ 'Carla Madison' found in text")
     else:
-        print("✗ 'Carla Madison' NOT found in page text")
+        print("✗ 'Carla Madison' NOT found in text")
 
-    # Find any text mentioning classes/activities
-    if "fit" in results_text.lower():
-        print("✓ 'FIT' found in page text")
+    # 3. Sample Data Extraction
+    print(f"\n--- First 5 Rows Content ---")
+    for i, row in enumerate(rows[:5], 1):
+        text = row.get_text(" | ", strip=True)[:100]
+        print(f"Row {i}: {text}...")
 
 finally:
     driver.quit()
