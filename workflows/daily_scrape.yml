@@ -1,45 +1,33 @@
-name: Daily Schedule Update
+name: Daily Scrape
 
 on:
   schedule:
-    - cron: '0 11 * * *'
+    - cron: "0 12 * * *"
   workflow_dispatch:
-
-permissions:
-  contents: write
 
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: "3.11"
 
-      # --- CRITICAL: Install Browser ---
-      - name: Install Google Chrome
+      - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
+          pip install requests beautifulsoup4
 
-      # --- CRITICAL: Install Libraries ---
-      - name: Install Python Libraries
-        run: |
-          pip install --upgrade pip
-          pip install pandas selenium webdriver-manager beautifulsoup4 undetected-chromedriver
-
-      - name: Run Scraper
+      - name: Run scraper
         run: python scrape.py
 
-      - name: Commit Results
+      - name: Commit updated JSON
         run: |
-          git config --global user.name "FitnessBot"
-          git config --global user.email "bot@example.com"
-          git add fitness_schedule.csv
-          git commit -m "Update schedule [skip ci]" || echo "No changes to commit"
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add schedule.json
+          git commit -m "Update schedule" || echo "No changes"
           git push
