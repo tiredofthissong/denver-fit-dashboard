@@ -144,7 +144,7 @@ async function fetchWeather(){
     renderWeather(data);
   }catch(error){
     console.error('Weather fetch failed:',error);
-    widget.style.display='none';
+    widget.innerHTML='<span style="font-size:2rem">🌤️</span><div><div class="weather-temp">Denver</div><div class="weather-desc">Colorado</div></div>';
   }
 }
 
