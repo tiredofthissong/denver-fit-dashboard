@@ -1,0 +1,12 @@
+# Private Claude Code instructions (stays on your Mac only)
+CLAUDE.md
+
+# Environment files (where passwords/keys go)
+.env
+
+# Mac system junk files
+.DS_Store
+
+# Python cache files (auto-generated, not needed in repo)
+__pycache__/
+*.pyc
