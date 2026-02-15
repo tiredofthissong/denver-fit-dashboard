@@ -2,17 +2,27 @@ import requests
 from bs4 import BeautifulSoup
 import json
 from datetime import datetime
+from urllib.parse import urlparse
 
-URL = "PASTE_THE_PUBLIC_SCHEDULE_URL_HERE"
+URL = "https://anc.apm.activecommunities.com/denver/activity/search?activity_keyword=Carla%20Madison"
+
+def validate_url(url):
+    parsed = urlparse(url)
+    if not parsed.scheme or not parsed.netloc:
+        raise ValueError("URL must include https:// and be a valid absolute URL")
 
 def fetch_page():
+    validate_url(URL)
+
     headers = {
         "User-Agent": "Mozilla/5.0",
         "Accept-Language": "en-US,en;q=0.9"
     }
+
     r = requests.get(URL, headers=headers, timeout=30)
     r.raise_for_status()
     return r.text
+
 
 def parse_schedule(html):
     soup = BeautifulSoup(html, "html.parser")
