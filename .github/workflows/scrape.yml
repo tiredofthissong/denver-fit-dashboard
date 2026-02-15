@@ -1,4 +1,4 @@
-name: Scrape Schedule
+name: Update Schedule
 
 on:
   schedule:
@@ -10,32 +10,19 @@ permissions:
   contents: write
 
 jobs:
-  scrape:
+  update:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Install Chrome
-        uses: browser-actions/setup-chrome@v1
-
-      - name: Install ChromeDriver
-        uses: nanasess/setup-chromedriver@v2
-
-      - name: Install dependencies
-        run: pip install selenium beautifulsoup4
-
       - name: Run scraper
-        run: |
-          Xvfb :99 -screen 0 1920x1080x24 &
-          export DISPLAY=:99
-          python scripts/run_scrape.py
+        run: python scripts/scrape_api.py
 
       - name: Commit changes
         run: |
