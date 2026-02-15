@@ -1,4 +1,6 @@
 name: Daily Scrape
+permissions:
+  contents: write
 
 on:
   schedule:
