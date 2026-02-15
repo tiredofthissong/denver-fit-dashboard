@@ -1,69 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Carla Madison Schedule</title>
-
-<style>
-body {
-  font-family: system-ui;
-  margin: 0;
-  padding: 1rem;
-  background: #f7f7f7;
-}
-
-.card {
-  background: white;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-
-.time {
-  font-weight: 600;
-}
-
-.updated {
-  font-size: 0.8rem;
-  color: #666;
-}
-</style>
+  <meta http-equiv="refresh" content="0; url=src/dashboard/index.html">
+  <link rel="canonical" href="src/dashboard/index.html">
 </head>
-
 <body>
-
-<h2>Carla Madison Fitness Classes</h2>
-<div id="app"></div>
-<p class="updated" id="updated"></p>
-
-<script>
-async function loadSchedule() {
-  const res = await fetch("schedule.json");
-  const data = await res.json();
-
-  const app = document.getElementById("app");
-  app.innerHTML = "";
-
-  data.classes.forEach(cls => {
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `
-      <div class="time">${cls.time}</div>
-      <div>${cls.name}</div>
-      <div>${cls.date}</div>
-      <div>${cls.location}</div>
-    `;
-    app.appendChild(card);
-  });
-
-  document.getElementById("updated").innerText =
-    "Last updated: " + new Date(data.last_updated).toLocaleString();
-}
-
-loadSchedule();
-</script>
-
+  <p>Redirecting to <a href="src/dashboard/index.html">dashboard</a>...</p>
 </body>
 </html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0a0a">
+  <title>CarlaFit</title>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --card: #1a1a1a;
+      --text: #f5f5f5;
+      --muted: #888;
+      --accent: #4ade80;
+      --yoga: #a78bfa;
+      --spin: #f472b6;
+      --strength: #fb923c;
+      --cardio: #f87171;
+      --aqua: #38bdf8;
+      --dance: #facc15;
+      --general: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    header {
+      max-width: 600px;
+      margin: 0 auto 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    h1 { font-size: 1.25rem; }
+    .toggle {
+      display: flex;
+      gap: 0.25rem;
+      background: var(--card);
+      padding: 0.25rem;
+      border-radius: 8px;
+    }
+    .toggle button {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    .toggle button.active {
+      background: var(--accent);
+      color: var(--bg);
+    }
+    main {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .loading, .empty, .error {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--muted);
+    }
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--card);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .day-header {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin: 1.5rem 0 0.5rem;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 0.875rem 1rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .info { flex: 1; min-width: 0; }
+    .name {
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .meta { font-size: 0.8rem; color: var(--muted); }
+    .time {
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--accent);
+    }
+    .cat-yoga { background: var(--yoga); }
+    .cat-spin { background: var(--spin); }
+    .cat-strength { background: var(--strength); }
+    .cat-cardio { background: var(--cardio); }
+    .cat-aqua { background: var(--aqua); }
+    .cat-dance { background: var(--dance); }
+    .cat-general { background: var(--general); }
+    footer {
+      max-width: 600px;
+      margin: 2rem auto 0;
+      text-align: center;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>💪 CarlaFit</h1>
+  <div class="toggle">
+    <button id="todayBtn" class="active">Today</button>
+    <button id="weekBtn">Week</button>
+  </div>
+</header>
+
+<main id="app">
+  <div class="loading">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+</main>
+
+<footer id="footer"></footer>
+
+<script>
+let classes = [];
+let view = "today";
+
+async function load() {
+  try {
+    const r = await fetch("data/schedule.json", {cache:"no-store"});
+    const d = await r.json();
+    classes = d.classes || [];
+    document.getElementById("footer").textContent = "Updated " + timeAgo(d.last_updated);
+    render();
+  } catch(e) {
+    document.getElementById("app").innerHTML = '<div class="error">Failed to load</div>';
+  }
+}
+
+function render() {
+  const app = document.getElementById("app");
+  if (!classes.length) {
+    app.innerHTML = '<div class="empty">No classes</div>';
+    return;
+  }
+  
+  const now = new Date();
+  const filtered = classes.filter(c => {
+    const d = new Date(c.date);
+    if (view === "today") return d.toDateString() === now.toDateString();
+    const week = new Date(now); week.setDate(week.getDate() + 7);
+    return d >= now && d <= week;
+  });
+  
+  if (!filtered.length) {
+    app.innerHTML = `<div class="empty">No classes ${view === "today" ? "today" : "this week"}</div>`;
+    return;
+  }
+  
+  const grouped = filtered.reduce((a, c) => {
+    (a[c.date] = a[c.date] || []).push(c);
+    return a;
+  }, {});
+  
+  app.innerHTML = Object.entries(grouped).map(([date, items]) => `
+    <div class="day-header">${formatDate(date)}</div>
+    ${items.map(c => `
+      <div class="card">
+        <div class="dot cat-${c.category || 'general'}"></div>
+        <div class="info">
+          <div class="name">${c.name}</div>
+          <div class="meta">${c.location || 'Carla Madison'}</div>
+        </div>
+        <div class="time">${c.time}</div>
+      </div>
+    `).join("")}
+  `).join("");
+}
+
+function formatDate(s) {
+  const d = new Date(s);
+  const now = new Date();
+  if (d.toDateString() === now.toDateString()) return "Today";
+  const tom = new Date(now); tom.setDate(tom.getDate() + 1);
+  if (d.toDateString() === tom.toDateString()) return "Tomorrow";
+  return d.toLocaleDateString("en-US", {weekday:"short", month:"short", day:"numeric"});
+}
+
+function timeAgo(iso) {
+  const mins = Math.floor((new Date() - new Date(iso)) / 60000);
+  if (mins < 60) return mins + "m ago";
+  if (mins < 1440) return Math.floor(mins/60) + "h ago";
+  return Math.floor(mins/1440) + "d ago";
+}
+
+document.getElementById("todayBtn").onclick = () => {
+  view = "today";
+  document.getElementById("todayBtn").classList.add("active");
+  document.getElementById("weekBtn").classList.remove("active");
+  render();
+};
+
+document.getElementById("weekBtn").onclick = () => {
+  view = "week";
+  document.getElementById("weekBtn").classList.add("active");
+  document.getElementById("todayBtn").classList.remove("active");
+  render();
+};
+
+load();
+</script>
+</body>
+</html>
