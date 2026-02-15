@@ -235,7 +235,22 @@ function buildUI(){
 function render(){
   const dt=DATES[SEL];
   if(!dt){document.getElementById("app").innerHTML='<div class="empty">No classes</div>';return;}
-  const list=D.filter(c=>c.date===dt).sort((a,b)=>getH(a.time)-getH(b.time));
+  let list=D.filter(c=>c.date===dt).sort((a,b)=>getH(a.time)-getH(b.time));
+  const today=new Date().toISOString().split("T")[0];
+  if(dt===today){
+    const now=new Date();
+    const nowMin=now.getHours()*60+now.getMinutes();
+    list=list.filter(c=>{
+      const m=c.time.match(/(\d+):(\d+)(am|pm)/i);
+      if(!m)return true;
+      let h=+m[1],min=+m[2];
+      const ap=m[3].toLowerCase();
+      if(ap==="pm"&&h!==12)h+=12;
+      if(ap==="am"&&h===12)h=0;
+      const classMin=h*60+min;
+      return classMin-nowMin>30;
+    });
+  }
   const grp={m:[],a:[],e:[]};
   list.forEach(c=>{const h=getH(c.time);(h<12?grp.m:h<17?grp.a:grp.e).push(c);});
   let html="";
