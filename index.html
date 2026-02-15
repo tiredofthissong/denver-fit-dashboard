@@ -106,7 +106,7 @@ let D=[],DATES=[],SEL=0;
 
 // Weather API configuration
 const WEATHER_CONFIG={
-  API_KEY:localStorage.getItem('owm_api_key')||'',
+  API_KEY:'4226171962a8247cbe74bb7bc108564a',
   LAT:39.7392,
   LON:-104.9903,
   UNITS:'imperial',
@@ -125,15 +125,6 @@ async function fetchWeather(){
   if(window.innerWidth<768)return;
   const widget=document.getElementById('weather-widget');
   if(!widget)return;
-  const isLocal=window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1';
-  if(!WEATHER_CONFIG.API_KEY){
-    if(isLocal){
-      widget.innerHTML='<div class="weather-error" onclick="promptApiKey()" style="cursor:pointer">⚙️ Configure Weather</div>';
-    }else{
-      widget.style.display='none';
-    }
-    return;
-  }
   const cache=getWeatherCache();
   if(cache&&Date.now()-cache.timestamp<WEATHER_CONFIG.CACHE_DURATION){
     renderWeather(cache.data);
@@ -142,26 +133,18 @@ async function fetchWeather(){
   widget.innerHTML='<div class="weather-loading">Loading weather...</div>';
   try{
     const url=`https://api.openweathermap.org/data/2.5/weather?lat=${WEATHER_CONFIG.LAT}&lon=${WEATHER_CONFIG.LON}&appid=${WEATHER_CONFIG.API_KEY}&units=${WEATHER_CONFIG.UNITS}`;
-    console.log('Fetching weather from:',url.replace(WEATHER_CONFIG.API_KEY,'***KEY***'));
     const response=await fetch(url);
-    console.log('Weather API response status:',response.status);
     if(!response.ok){
       const errorData=await response.json().catch(()=>({}));
       console.error('Weather API error:',errorData);
       throw new Error(`${response.status}: ${errorData.message||'Unknown error'}`);
     }
     const data=await response.json();
-    console.log('Weather data received:',data);
     setWeatherCache(data);
     renderWeather(data);
   }catch(error){
     console.error('Weather fetch failed:',error);
-    if(isLocal){
-      const msg=error.message.includes('401')||error.message.includes('Invalid')?'Invalid API key - Click to reset':error.message.includes('429')?'Too many requests - Wait a moment':'Weather error: '+error.message;
-      widget.innerHTML='<div class="weather-error" onclick="clearWeatherConfig()" style="cursor:pointer">❌ '+msg+'</div>';
-    }else{
-      widget.style.display='none';
-    }
+    widget.style.display='none';
   }
 }
 
@@ -201,27 +184,6 @@ function setWeatherCache(data){
     localStorage.setItem(WEATHER_CONFIG.CACHE_KEY,JSON.stringify(cache));
   }catch(e){
     console.warn('Failed to cache weather data:',e);
-  }
-}
-
-function promptApiKey(){
-  const isLocal=window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1';
-  if(!isLocal)return;
-  const key=prompt('Enter your OpenWeatherMap API key:\n\nGet one free at: https://openweathermap.org/api\n\nYour key will be stored locally in your browser.');
-  if(key&&key.trim()){
-    localStorage.setItem('owm_api_key',key.trim());
-    WEATHER_CONFIG.API_KEY=key.trim();
-    fetchWeather();
-  }
-}
-
-function clearWeatherConfig(){
-  const isLocal=window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1';
-  if(!isLocal)return;
-  if(confirm('Clear weather configuration and try again?')){
-    localStorage.removeItem('owm_api_key');
-    localStorage.removeItem(WEATHER_CONFIG.CACHE_KEY);
-    location.reload();
   }
 }
 
