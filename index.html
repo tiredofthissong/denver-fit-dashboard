@@ -2,24 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
   <meta name="theme-color" content="#111">
-  <meta name="apple-mobile-web-app-capable" content="yes">
   <title>CarlaFit</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#111;color:#fff;min-height:100vh;padding-bottom:2rem}
-    header{background:#1a1a1a;padding:1rem;position:sticky;top:0;z-index:100;border-bottom:1px solid #333}
-    .logo{font-size:1.1rem;font-weight:700;text-align:center;margin-bottom:0.75rem}
-    .days{display:flex;gap:0.25rem;overflow-x:auto;padding:0.25rem 0;-webkit-overflow-scrolling:touch}
-    .day-btn{flex:1;min-width:48px;background:#222;border:none;color:#888;padding:0.5rem 0.25rem;border-radius:8px;text-align:center;cursor:pointer;transition:all 0.2s}
+    body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#111;color:#fff;min-height:100vh}
+    header{background:#1a1a1a;padding:1rem;text-align:center;border-bottom:1px solid #333}
+    .logo{font-size:1.2rem;font-weight:700}
+    .sub{font-size:0.7rem;color:#666;margin-top:0.25rem}
+    .days{display:flex;gap:0.25rem;overflow-x:auto;padding:0.75rem 1rem;background:#151515;-webkit-overflow-scrolling:touch}
+    .day-btn{flex-shrink:0;width:52px;background:#222;border:none;color:#888;padding:0.5rem;border-radius:8px;text-align:center;cursor:pointer}
     .day-btn.active{background:#4ade80;color:#000}
-    .day-btn span{display:block;font-size:0.65rem;text-transform:uppercase}
-    .day-btn strong{display:block;font-size:1rem}
-    main{max-width:500px;margin:0 auto;padding:0.75rem}
-    .time-section{margin-bottom:1.25rem}
-    .time-header{font-size:0.7rem;color:#4ade80;text-transform:uppercase;letter-spacing:0.05em;padding:0.5rem 0;border-bottom:1px solid #222;margin-bottom:0.5rem}
-    .card{background:#1a1a1a;border-radius:10px;padding:0.875rem;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.75rem;cursor:pointer;border-left:3px solid #555;transition:transform 0.15s}
+    .day-btn.empty{opacity:0.3;pointer-events:none}
+    .day-btn span{display:block;font-size:0.6rem;text-transform:uppercase}
+    .day-btn strong{display:block;font-size:1.1rem}
+    .container{max-width:900px;margin:0 auto;padding:1rem}
+    .time-header{font-size:0.7rem;color:#4ade80;text-transform:uppercase;padding:0.75rem 0;border-bottom:1px solid #222;margin-top:1rem}
+    .card{background:#1a1a1a;border-radius:10px;padding:0.875rem;margin-top:0.5rem;display:flex;align-items:center;gap:0.75rem;cursor:pointer;border-left:3px solid #555}
     .card:active{transform:scale(0.98)}
     .card.yoga,.card.pilates{border-color:#a78bfa}
     .card.spin{border-color:#f472b6}
@@ -28,126 +28,147 @@
     .card.aqua{border-color:#38bdf8}
     .card.dance{border-color:#facc15}
     .card.mind_body{border-color:#2dd4bf}
-    .icon{font-size:1.4rem;width:36px;text-align:center}
+    .icon{font-size:1.3rem;width:32px;text-align:center}
     .info{flex:1;min-width:0}
     .name{font-weight:600;font-size:0.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .meta{font-size:0.75rem;color:#777}
+    .meta{font-size:0.7rem;color:#666}
     .time{font-weight:700;font-size:0.85rem;color:#4ade80}
-    .empty{text-align:center;padding:3rem 1rem;color:#555}
-    .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;display:none;align-items:flex-end;justify-content:center}
+    .empty{text-align:center;padding:3rem;color:#444}
+    .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:200;display:none;align-items:flex-end;justify-content:center}
     .modal-bg.show{display:flex}
-    .modal{background:#1a1a1a;width:100%;max-width:500px;border-radius:16px 16px 0 0;padding:1.5rem;max-height:70vh;overflow-y:auto}
-    .modal h2{font-size:1.2rem;margin-bottom:0.25rem}
-    .modal .cat{font-size:0.75rem;color:#4ade80;text-transform:uppercase;margin-bottom:1rem}
-    .modal .row{display:flex;justify-content:space-between;padding:0.75rem 0;border-bottom:1px solid #333;font-size:0.9rem}
-    .modal .row:last-child{border:none}
-    .modal .label{color:#777}
-    .modal .val{font-weight:500;text-align:right}
-    .gcal-btn{display:block;width:100%;background:#4ade80;color:#000;border:none;padding:1rem;border-radius:10px;font-size:1rem;font-weight:600;margin-top:1rem;cursor:pointer}
-    .close-btn{display:block;width:100%;background:#333;color:#fff;border:none;padding:0.75rem;border-radius:10px;font-size:0.9rem;margin-top:0.5rem;cursor:pointer}
-    footer{text-align:center;font-size:0.65rem;color:#444;padding:1rem}
+    .modal{background:#1a1a1a;width:100%;max-width:500px;border-radius:16px 16px 0 0;padding:1.25rem}
+    .modal h2{font-size:1.1rem;margin-bottom:0.25rem}
+    .modal .cat{font-size:0.7rem;color:#4ade80;text-transform:uppercase;margin-bottom:1rem}
+    .modal .row{display:flex;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid #222;font-size:0.85rem}
+    .modal .label{color:#666}
+    .gcal-btn{display:block;width:100%;background:#4ade80;color:#000;border:none;padding:0.875rem;border-radius:8px;font-weight:600;margin-top:1rem;cursor:pointer}
+    .close-btn{width:100%;background:#333;color:#fff;border:none;padding:0.75rem;border-radius:8px;margin-top:0.5rem;cursor:pointer}
+    footer{text-align:center;font-size:0.6rem;color:#333;padding:1rem}
+    @media(min-width:768px){
+      .desktop{display:block}
+      .mobile{display:none}
+      .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:#222;border-radius:8px;overflow:hidden;margin-bottom:1rem}
+      .cal-head{background:#1a1a1a;padding:0.5rem;text-align:center;font-size:0.7rem;color:#666;text-transform:uppercase}
+      .cal-day{background:#1a1a1a;min-height:80px;padding:0.5rem;cursor:pointer;transition:background 0.2s}
+      .cal-day:hover{background:#222}
+      .cal-day.active{background:#252}
+      .cal-day.empty{opacity:0.3;pointer-events:none}
+      .cal-num{font-size:0.9rem;font-weight:600;margin-bottom:0.25rem}
+      .cal-day.today .cal-num{color:#4ade80}
+      .cal-count{font-size:0.65rem;color:#666}
+      .split{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+      .modal{border-radius:16px;margin:auto}
+    }
+    @media(max-width:767px){.desktop{display:none}.mobile{display:block}}
   </style>
 </head>
 <body>
 <header>
   <div class="logo">💪 CarlaFit</div>
-  <div class="days" id="days"></div>
+  <div class="sub">Carla Madison Rec Center</div>
 </header>
-<main id="app"></main>
-<div class="modal-bg" id="modal"><div class="modal" id="modal-content"></div></div>
+
+<div class="mobile">
+  <div class="days" id="days"></div>
+</div>
+
+<div class="container">
+  <div class="desktop" id="calendar"></div>
+  <div id="app"></div>
+</div>
+
+<div class="modal-bg" id="modal"><div class="modal" id="mc"></div></div>
 <footer id="footer"></footer>
+
 <script>
-const ICONS={yoga:"🧘",pilates:"🤸",spin:"🚴",strength:"💪",cardio:"🏃",aqua:"🏊",dance:"💃",mind_body:"🧘‍♀️",general:"📋"};
+const IC={yoga:"🧘",pilates:"🤸",spin:"🚴",strength:"💪",cardio:"🏃",aqua:"🏊",dance:"💃",mind_body:"🧘‍♀️",general:"📋"};
 const LOC="Carla Madison Recreation Center, 2401 E Colfax Ave, Denver, CO 80206";
-let DATA=[],SEL=0;
+let D=[],DATES=[],SEL=0;
 
 async function init(){
   try{
     const r=await fetch("data/schedule.json",{cache:"no-store"});
     const d=await r.json();
-    DATA=d.classes||[];
-    document.getElementById("footer").innerHTML="Updated "+timeAgo(d.last_updated);
-    buildDays();
-    render();
-  }catch(e){document.getElementById("app").innerHTML='<div class="empty">Could not load</div>';}
+    D=d.classes||[];
+    DATES=[...new Set(D.map(c=>c.date))].sort();
+    document.getElementById("footer").textContent="Updated "+timeAgo(d.last_updated)+" • Tap class for details";
+    buildUI();
+  }catch(e){document.getElementById("app").innerHTML='<div class="empty">Could not load schedule</div>';}
 }
 
-function buildDays(){
-  const c=document.getElementById("days");
-  let h="";
-  for(let i=0;i<7;i++){
-    const dt=new Date();dt.setDate(dt.getDate()+i);
-    const lbl=i===0?"Today":dt.toLocaleDateString("en-US",{weekday:"short"});
-    const num=dt.getDate();
-    h+='<button class="day-btn'+(i===0?' active':'')+'" data-i="'+i+'"><span>'+lbl+'</span><strong>'+num+'</strong></button>';
+function buildUI(){
+  // Mobile day buttons
+  const db=document.getElementById("days");
+  const today=new Date().toISOString().split("T")[0];
+  db.innerHTML=DATES.map((dt,i)=>{
+    const d=new Date(dt+"T12:00:00");
+    const lbl=dt===today?"Today":d.toLocaleDateString("en-US",{weekday:"short"});
+    return'<button class="day-btn'+(i===0?" active":"")+'" data-i="'+i+'"><span>'+lbl+'</span><strong>'+d.getDate()+'</strong></button>';
+  }).join("");
+  db.querySelectorAll(".day-btn").forEach(b=>b.onclick=()=>{SEL=+b.dataset.i;db.querySelectorAll(".day-btn").forEach(x=>x.classList.remove("active"));b.classList.add("active");render();});
+
+  // Desktop calendar
+  const cal=document.getElementById("calendar");
+  const days=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  let h='<div class="cal-grid">'+days.map(d=>'<div class="cal-head">'+d+'</div>').join("");
+  const first=new Date(DATES[0]+"T12:00:00");
+  const last=new Date(DATES[DATES.length-1]+"T12:00:00");
+  const start=new Date(first);start.setDate(start.getDate()-start.getDay());
+  for(let i=0;i<14;i++){
+    const curr=new Date(start);curr.setDate(start.getDate()+i);
+    const iso=curr.toISOString().split("T")[0];
+    const cnt=D.filter(c=>c.date===iso).length;
+    const hasData=DATES.includes(iso);
+    const isToday=iso===today;
+    const idx=DATES.indexOf(iso);
+    h+='<div class="cal-day'+(hasData?"":" empty")+(isToday?" today":"")+(idx===SEL?" active":"")+'" data-i="'+idx+'"><div class="cal-num">'+curr.getDate()+'</div>'+(cnt?'<div class="cal-count">'+cnt+' classes</div>':"")+'</div>';
   }
-  c.innerHTML=h;
-  c.querySelectorAll(".day-btn").forEach(b=>b.onclick=()=>{
-    SEL=+b.dataset.i;
-    c.querySelectorAll(".day-btn").forEach(x=>x.classList.remove("active"));
-    b.classList.add("active");
-    render();
-  });
+  cal.innerHTML=h+'</div>';
+  cal.querySelectorAll(".cal-day:not(.empty)").forEach(el=>el.onclick=()=>{SEL=+el.dataset.i;buildUI();render();});
+  render();
 }
 
 function render(){
-  const dt=new Date();dt.setDate(dt.getDate()+SEL);
-  const key=dt.toISOString().split("T")[0];
-  const list=DATA.filter(c=>c.date===key).sort((a,b)=>getH(a.time)-getH(b.time));
-  if(!list.length){document.getElementById("app").innerHTML='<div class="empty">No classes this day</div>';return;}
-  const grp={morning:[],afternoon:[],evening:[]};
-  list.forEach(c=>{const h=getH(c.time);if(h<12)grp.morning.push(c);else if(h<17)grp.afternoon.push(c);else grp.evening.push(c);});
+  const dt=DATES[SEL];
+  if(!dt){document.getElementById("app").innerHTML='<div class="empty">No classes</div>';return;}
+  const list=D.filter(c=>c.date===dt).sort((a,b)=>getH(a.time)-getH(b.time));
+  const grp={m:[],a:[],e:[]};
+  list.forEach(c=>{const h=getH(c.time);(h<12?grp.m:h<17?grp.a:grp.e).push(c);});
   let html="";
-  if(grp.morning.length)html+=section("☀️ Morning",grp.morning);
-  if(grp.afternoon.length)html+=section("🌤 Afternoon",grp.afternoon);
-  if(grp.evening.length)html+=section("🌙 Evening",grp.evening);
-  document.getElementById("app").innerHTML=html;
-  document.querySelectorAll(".card").forEach((el,i)=>el.onclick=()=>showModal(list[el.dataset.idx]));
+  if(grp.m.length)html+=sec("☀️ Morning",grp.m);
+  if(grp.a.length)html+=sec("🌤 Afternoon",grp.a);
+  if(grp.e.length)html+=sec("🌙 Evening",grp.e);
+  document.getElementById("app").innerHTML=html||'<div class="empty">No classes</div>';
+  document.querySelectorAll(".card").forEach(el=>el.onclick=()=>modal(D.find(c=>c.date===dt&&c.name===el.dataset.n&&c.time===el.dataset.t)));
 }
 
-function section(t,arr){
-  let h='<div class="time-section"><div class="time-header">'+t+'</div>';
-  arr.forEach((c,i)=>{
-    const cat=c.category||"general";
-    const idx=DATA.indexOf(c);
-    h+='<div class="card '+cat+'" data-idx="'+idx+'"><div class="icon">'+ICONS[cat]+'</div><div class="info"><div class="name">'+clean(c.name)+'</div><div class="meta">'+(c.instructor?cleanI(c.instructor):c.room||"")+'</div></div><div class="time">'+fmtTime(c.time)+'</div></div>';
-  });
-  return h+'</div>';
+function sec(t,arr){
+  return'<div class="time-header">'+t+'</div>'+arr.map(c=>'<div class="card '+(c.category||"general")+'" data-n="'+esc(c.name)+'" data-t="'+c.time+'"><div class="icon">'+(IC[c.category]||IC.general)+'</div><div class="info"><div class="name">'+clean(c.name)+'</div><div class="meta">'+(c.instructor?cleanI(c.instructor):c.room||"")+'</div></div><div class="time">'+fmtT(c.time)+'</div></div>').join("");
 }
 
-function showModal(c){
-  const cat=c.category||"general";
-  const dt=new Date(c.date+"T12:00:00");
-  const h='<h2>'+clean(c.name)+'</h2><div class="cat">'+cat.replace("_"," ")+'</div>'+
-    '<div class="row"><span class="label">Date</span><span class="val">'+dt.toLocaleDateString("en-US",{weekday:"long",month:"short",day:"numeric"})+'</span></div>'+
-    '<div class="row"><span class="label">Time</span><span class="val">'+c.time+'</span></div>'+
-    '<div class="row"><span class="label">Duration</span><span class="val">'+(c.duration_minutes||60)+' min</span></div>'+
-    '<div class="row"><span class="label">Instructor</span><span class="val">'+(c.instructor?cleanI(c.instructor):"TBD")+'</span></div>'+
-    '<div class="row"><span class="label">Room</span><span class="val">'+(c.room||"TBD")+'</span></div>'+
-    '<button class="gcal-btn" onclick="addCal()">📅 Add to Calendar</button>'+
-    '<button class="close-btn" onclick="closeModal()">Close</button>';
-  document.getElementById("modal-content").innerHTML=h;
+function modal(c){
+  if(!c)return;
+  const d=new Date(c.date+"T12:00:00");
+  document.getElementById("mc").innerHTML='<h2>'+clean(c.name)+'</h2><div class="cat">'+(c.category||"general").replace("_"," ")+'</div><div class="row"><span class="label">Date</span><span>'+d.toLocaleDateString("en-US",{weekday:"long",month:"short",day:"numeric"})+'</span></div><div class="row"><span class="label">Time</span><span>'+c.time+'</span></div><div class="row"><span class="label">Duration</span><span>'+(c.duration_minutes||60)+' min</span></div><div class="row"><span class="label">Instructor</span><span>'+(c.instructor?cleanI(c.instructor):"TBD")+'</span></div><div class="row"><span class="label">Room</span><span>'+(c.room||"TBD")+'</span></div><button class="gcal-btn" onclick="gcal()">📅 Add to Calendar</button><button class="close-btn" onclick="closeM()">Close</button>';
   document.getElementById("modal").classList.add("show");
-  window.SELC=c;
+  window._C=c;
 }
-function closeModal(){document.getElementById("modal").classList.remove("show");}
-document.getElementById("modal").onclick=e=>{if(e.target.id==="modal")closeModal();};
+function closeM(){document.getElementById("modal").classList.remove("show");}
+document.getElementById("modal").onclick=e=>{if(e.target.id==="modal")closeM();};
 
-function addCal(){
-  const c=window.SELC;
-  const st=new Date(c.date+"T"+parseT(c.time));
-  const en=new Date(st.getTime()+(c.duration_minutes||60)*60000);
-  const fmt=d=>d.toISOString().replace(/[-:]/g,"").split(".")[0]+"Z";
-  const url="https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent(clean(c.name))+"&dates="+fmt(st)+"/"+fmt(en)+"&location="+encodeURIComponent(LOC)+"&details="+encodeURIComponent("Instructor: "+(c.instructor?cleanI(c.instructor):"TBD")+"\nRoom: "+(c.room||"TBD"));
-  window.open(url,"_blank");
+function gcal(){
+  const c=window._C,st=new Date(c.date+"T"+parseT(c.time)),en=new Date(st.getTime()+(c.duration_minutes||60)*60000);
+  const f=d=>d.toISOString().replace(/[-:]/g,"").split(".")[0]+"Z";
+  window.open("https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent(clean(c.name))+"&dates="+f(st)+"/"+f(en)+"&location="+encodeURIComponent(LOC)+"&details="+encodeURIComponent("Instructor: "+(c.instructor?cleanI(c.instructor):"TBD")+"\nRoom: "+(c.room||"TBD")),"_blank");
 }
 
 function getH(t){const m=t.match(/(\d+):(.*?)(am|pm)/i);if(!m)return 12;let h=+m[1];if(m[3].toLowerCase()==="pm"&&h!==12)h+=12;if(m[3].toLowerCase()==="am"&&h===12)h=0;return h;}
 function parseT(t){const m=t.match(/(\d+):(\d+)(am|pm)/i);if(!m)return"12:00:00";let h=+m[1];if(m[3].toLowerCase()==="pm"&&h!==12)h+=12;if(m[3].toLowerCase()==="am"&&h===12)h=0;return String(h).padStart(2,"0")+":"+m[2]+":00";}
-function fmtTime(t){return t.split("-")[0].replace(/(\d+:\d+)(am|pm)/i,(m,x,ap)=>x+" "+ap.toUpperCase());}
+function fmtT(t){return t.split("-")[0].replace(/(\d+:\d+)(am|pm)/i,(m,x,ap)=>x+ap.toUpperCase());}
 function clean(n){return n.replace(/&reg;/g,"®").replace(/CANCELED:\s*/gi,"❌ ").replace(/<[^>]*>/g,"");}
 function cleanI(i){return i.replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim();}
-function timeAgo(iso){const m=Math.floor((new Date()-new Date(iso))/60000);if(m<60)return m+"m ago";if(m<1440)return Math.floor(m/60)+"h ago";return Math.floor(m/1440)+"d ago";}
+function esc(s){return s.replace(/"/g,"&quot;");}
+function timeAgo(iso){const m=Math.floor((new Date()-new Date(iso))/60000);return m<60?m+"m ago":m<1440?Math.floor(m/60)+"h ago":Math.floor(m/1440)+"d ago";}
 init();
 </script>
 </body>
