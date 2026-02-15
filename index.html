@@ -4,13 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0a0a0a">
-  <title>CarlaFit</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>CarlaFit — Carla Madison Schedule</title>
+  <link rel="manifest" href="manifest.json">
   <style>
     :root {
-      --bg: #0a0a0a;
+      --bg: #0f0f0f;
       --card: #1a1a1a;
+      --card-hover: #222;
       --text: #f5f5f5;
-      --muted: #888;
+      --muted: #777;
       --accent: #4ade80;
       --yoga: #a78bfa;
       --spin: #f472b6;
@@ -18,53 +21,177 @@
       --cardio: #f87171;
       --aqua: #38bdf8;
       --dance: #facc15;
+      --mind_body: #2dd4bf;
+      --pilates: #c084fc;
       --general: #94a3b8;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding: 1rem;
+      padding-bottom: 2rem;
     }
+    
+    /* Header */
     header {
-      max-width: 600px;
-      margin: 0 auto 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    h1 { font-size: 1.25rem; }
-    .toggle {
-      display: flex;
-      gap: 0.25rem;
-      background: var(--card);
-      padding: 0.25rem;
-      border-radius: 8px;
-    }
-    .toggle button {
-      background: transparent;
-      border: none;
-      color: var(--muted);
-      padding: 0.5rem 0.75rem;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.875rem;
-    }
-    .toggle button.active {
-      background: var(--accent);
-      color: var(--bg);
-    }
-    main { max-width: 600px; margin: 0 auto; }
-    .loading, .empty, .error {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      padding: 1.5rem 1rem;
       text-align: center;
-      padding: 3rem 1rem;
+      border-bottom: 1px solid #333;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    
+    /* Main */
+    main {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+    
+    /* Day Section */
+    .day-section {
+      margin-top: 1.5rem;
+    }
+    .day-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .day-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .day-date {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .day-today {
+      background: var(--accent);
+      color: #000;
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    
+    /* Time Group */
+    .time-group {
+      margin-bottom: 1rem;
+    }
+    .time-label {
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+      padding-left: 0.25rem;
+    }
+    
+    /* Class Card */
+    .class-card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border-left: 4px solid var(--general);
+    }
+    .class-card:hover {
+      background: var(--card-hover);
+      transform: translateX(4px);
+    }
+    .class-card:active {
+      transform: scale(0.98);
+    }
+    .class-card.cat-yoga, .class-card.cat-pilates { border-left-color: var(--yoga); }
+    .class-card.cat-spin { border-left-color: var(--spin); }
+    .class-card.cat-strength { border-left-color: var(--strength); }
+    .class-card.cat-cardio { border-left-color: var(--cardio); }
+    .class-card.cat-aqua { border-left-color: var(--aqua); }
+    .class-card.cat-dance { border-left-color: var(--dance); }
+    .class-card.cat-mind_body { border-left-color: var(--mind_body); }
+    
+    .class-icon {
+      font-size: 1.5rem;
+      width: 40px;
+      text-align: center;
+    }
+    .class-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .class-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 0.15rem;
+    }
+    .class-name.canceled {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+    .class-meta {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .class-time {
+      text-align: right;
+    }
+    .class-time-start {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--accent);
+    }
+    .class-duration {
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+    
+    /* Add to Calendar Button */
+    .gcal-icon {
+      width: 28px;
+      height: 28px;
+      background: #333;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+    .class-card:hover .gcal-icon {
+      background: var(--accent);
+    }
+    
+    /* States */
+    .loading, .empty {
+      text-align: center;
+      padding: 4rem 1rem;
       color: var(--muted);
     }
     .spinner {
-      width: 32px;
-      height: 32px;
+      width: 40px;
+      height: 40px;
       border: 3px solid var(--card);
       border-top-color: var(--accent);
       border-radius: 50%;
@@ -72,55 +199,42 @@
       margin: 0 auto 1rem;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .day-header {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-      margin: 1.5rem 0 0.5rem;
-    }
-    .card {
-      background: var(--card);
-      border-radius: 10px;
-      padding: 0.875rem 1rem;
-      margin-bottom: 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .info { flex: 1; min-width: 0; }
-    .name {
-      font-weight: 500;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .meta { font-size: 0.8rem; color: var(--muted); }
-    .time {
-      font-weight: 600;
-      font-size: 0.875rem;
-      color: var(--accent);
-    }
-    .cat-yoga, .cat-pilates { background: var(--yoga); }
-    .cat-spin { background: var(--spin); }
-    .cat-strength { background: var(--strength); }
-    .cat-cardio { background: var(--cardio); }
-    .cat-aqua { background: var(--aqua); }
-    .cat-dance { background: var(--dance); }
-    .cat-mind_body { background: #2dd4bf; }
-    .cat-general { background: var(--general); }
+    
+    /* Footer */
     footer {
       max-width: 600px;
       margin: 2rem auto 0;
+      padding: 1rem;
       text-align: center;
       font-size: 0.7rem;
       color: var(--muted);
+      border-top: 1px solid #222;
+    }
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    
+    /* Legend */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
     }
   </style>
 </head>
@@ -128,126 +242,214 @@
 
 <header>
   <h1>💪 CarlaFit</h1>
-  <div class="toggle">
-    <button id="todayBtn" class="active">Today</button>
-    <button id="weekBtn">Week</button>
-  </div>
+  <div class="subtitle">Carla Madison Rec Center — Next 15 Days</div>
 </header>
 
 <main id="app">
   <div class="loading">
     <div class="spinner"></div>
-    <p>Loading...</p>
+    <p>Loading schedule...</p>
   </div>
 </main>
 
-<footer id="footer"></footer>
+<footer id="footer">
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--yoga)"></div> Yoga/Pilates</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--spin)"></div> Cycling</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--strength)"></div> Strength</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cardio)"></div> Cardio</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--aqua)"></div> Aqua</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--dance)"></div> Dance</div>
+  </div>
+  <div id="updated"></div>
+  <div style="margin-top:0.5rem">Tap any class to add to Google Calendar</div>
+</footer>
 
 <script>
-let classes = [];
-let view = "today";
+const ICONS = {
+  yoga: "🧘", pilates: "🤸", spin: "🚴", strength: "💪",
+  cardio: "🏃", aqua: "🏊", dance: "💃", mind_body: "🧘‍♀️", general: "📋"
+};
+
+const LOCATION = "Carla Madison Recreation Center, 2401 E Colfax Ave, Denver, CO 80206";
 
 async function load() {
   try {
     const r = await fetch("data/schedule.json", {cache: "no-store"});
     if (!r.ok) throw new Error("Failed to load");
     const d = await r.json();
-    classes = d.classes || [];
-    document.getElementById("footer").textContent = "Updated " + timeAgo(d.last_updated);
-    render();
+    document.getElementById("updated").textContent = "Last updated: " + timeAgo(d.last_updated);
+    render(d.classes || []);
   } catch(e) {
-    document.getElementById("app").innerHTML = '<div class="error">Could not load schedule</div>';
+    document.getElementById("app").innerHTML = '<div class="empty">Could not load schedule. Please refresh.</div>';
   }
 }
 
-function render() {
+function render(classes) {
   const app = document.getElementById("app");
-  if (!classes.length) {
-    app.innerHTML = '<div class="empty">No classes found</div>';
-    return;
-  }
   
-  const now = new Date();
-  const today = now.toISOString().split("T")[0];
+  // Filter to next 15 days
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const maxDate = new Date(today);
+  maxDate.setDate(maxDate.getDate() + 15);
   
   const filtered = classes.filter(c => {
-    if (view === "today") return c.date === today;
-    const classDate = new Date(c.date + "T00:00:00");
-    const weekLater = new Date(now);
-    weekLater.setDate(weekLater.getDate() + 7);
-    return classDate >= new Date(today) && classDate <= weekLater;
+    const d = new Date(c.date + "T00:00:00");
+    return d >= today && d < maxDate;
   });
   
   if (!filtered.length) {
-    app.innerHTML = '<div class="empty">No classes ' + (view === "today" ? "today" : "this week") + '</div>';
+    app.innerHTML = '<div class="empty">No classes scheduled in the next 15 days.</div>';
     return;
   }
   
-  const grouped = filtered.reduce((a, c) => {
-    (a[c.date] = a[c.date] || []).push(c);
-    return a;
-  }, {});
+  // Group by date
+  const byDate = {};
+  filtered.forEach(c => {
+    if (!byDate[c.date]) byDate[c.date] = [];
+    byDate[c.date].push(c);
+  });
   
-  app.innerHTML = Object.entries(grouped).map(([date, items]) => 
-    '<div class="day-header">' + formatDate(date) + '</div>' +
-    items.map(c => 
-      '<div class="card">' +
-        '<div class="dot cat-' + (c.category || 'general') + '"></div>' +
-        '<div class="info">' +
-          '<div class="name">' + cleanName(c.name) + '</div>' +
-          '<div class="meta">' + (c.instructor ? 'with ' + cleanInstructor(c.instructor) : (c.room || '')) + '</div>' +
-        '</div>' +
-        '<div class="time">' + formatTime(c.time) + '</div>' +
-      '</div>'
-    ).join("")
-  ).join("");
+  // Sort dates
+  const sortedDates = Object.keys(byDate).sort();
+  
+  let html = '';
+  sortedDates.forEach(date => {
+    const classes = byDate[date];
+    const dateObj = new Date(date + "T12:00:00");
+    const isToday = date === today.toISOString().split("T")[0];
+    
+    // Group by time of day
+    const morning = classes.filter(c => getHour(c.time) < 12);
+    const afternoon = classes.filter(c => getHour(c.time) >= 12 && getHour(c.time) < 17);
+    const evening = classes.filter(c => getHour(c.time) >= 17);
+    
+    // Sort each group by time
+    [morning, afternoon, evening].forEach(arr => arr.sort((a,b) => getHour(a.time) - getHour(b.time)));
+    
+    html += '<section class="day-section">';
+    html += '<div class="day-header">';
+    html += '<span class="day-name">' + dateObj.toLocaleDateString("en-US", {weekday: "long"}) + '</span>';
+    html += '<span class="day-date">' + dateObj.toLocaleDateString("en-US", {month: "short", day: "numeric"}) + '</span>';
+    if (isToday) html += '<span class="day-today">Today</span>';
+    html += '</div>';
+    
+    if (morning.length) {
+      html += '<div class="time-group">';
+      html += '<div class="time-label">☀️ Morning</div>';
+      morning.forEach(c => html += renderCard(c));
+      html += '</div>';
+    }
+    if (afternoon.length) {
+      html += '<div class="time-group">';
+      html += '<div class="time-label">🌤️ Afternoon</div>';
+      afternoon.forEach(c => html += renderCard(c));
+      html += '</div>';
+    }
+    if (evening.length) {
+      html += '<div class="time-group">';
+      html += '<div class="time-label">🌙 Evening</div>';
+      evening.forEach(c => html += renderCard(c));
+      html += '</div>';
+    }
+    
+    html += '</section>';
+  });
+  
+  app.innerHTML = html;
+  
+  // Add click handlers
+  document.querySelectorAll('.class-card').forEach(card => {
+    card.addEventListener('click', () => {
+      window.open(card.dataset.gcal, '_blank');
+    });
+  });
+}
+
+function renderCard(c) {
+  const cat = c.category || 'general';
+  const icon = ICONS[cat] || ICONS.general;
+  const isCanceled = c.name.toLowerCase().includes('canceled');
+  const name = cleanName(c.name);
+  const instructor = c.instructor ? cleanInstructor(c.instructor) : '';
+  const gcalUrl = buildGcalUrl(c);
+  
+  return '<div class="class-card cat-' + cat + '" data-gcal="' + gcalUrl + '">' +
+    '<div class="class-icon">' + icon + '</div>' +
+    '<div class="class-info">' +
+      '<div class="class-name' + (isCanceled ? ' canceled' : '') + '">' + name + '</div>' +
+      '<div class="class-meta">' + (instructor ? 'with ' + instructor : c.room || '') + '</div>' +
+    '</div>' +
+    '<div class="class-time">' +
+      '<div class="class-time-start">' + formatTime(c.time) + '</div>' +
+      '<div class="class-duration">' + (c.duration_minutes || 60) + ' min</div>' +
+    '</div>' +
+    '<div class="gcal-icon">📅</div>' +
+  '</div>';
+}
+
+function getHour(timeStr) {
+  if (!timeStr) return 12;
+  const match = timeStr.match(/(\d+):(\d+)(am|pm)/i);
+  if (!match) return 12;
+  let h = parseInt(match[1]);
+  if (match[3].toLowerCase() === 'pm' && h !== 12) h += 12;
+  if (match[3].toLowerCase() === 'am' && h === 12) h = 0;
+  return h;
+}
+
+function formatTime(t) {
+  if (!t) return "";
+  const start = t.split("-")[0];
+  return start.replace(/(\d+):(\d+)(am|pm)/i, (m, h, min, ap) => {
+    return h + ":" + min + " " + ap.toUpperCase();
+  });
 }
 
 function cleanName(n) {
-  return n.replace(/&reg;/g, "®").replace(/CANCELED:\s*/i, "❌ ");
+  return n.replace(/&reg;/g, "®").replace(/CANCELED:\s*/gi, "").replace(/<[^>]*>/g, "");
 }
 
 function cleanInstructor(i) {
   return i.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }
 
-function formatDate(s) {
-  const d = new Date(s + "T12:00:00");
-  const now = new Date();
-  const today = now.toISOString().split("T")[0];
-  const tom = new Date(now);
-  tom.setDate(tom.getDate() + 1);
-  const tomorrow = tom.toISOString().split("T")[0];
-  if (s === today) return "Today";
-  if (s === tomorrow) return "Tomorrow";
-  return d.toLocaleDateString("en-US", {weekday:"short", month:"short", day:"numeric"});
+function buildGcalUrl(c) {
+  const startDate = new Date(c.date + "T" + parseTime(c.time));
+  const endDate = new Date(startDate.getTime() + (c.duration_minutes || 60) * 60000);
+  
+  const fmt = d => d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+  
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: cleanName(c.name),
+    dates: fmt(startDate) + "/" + fmt(endDate),
+    location: LOCATION,
+    details: "Instructor: " + (c.instructor ? cleanInstructor(c.instructor) : "TBD") + "\\nRoom: " + (c.room || "TBD")
+  });
+  
+  return "https://calendar.google.com/calendar/render?" + params.toString();
 }
 
-function formatTime(t) {
-  if (!t) return "";
-  return t.split("-")[0].replace(/([ap])m/i, " $1M").toUpperCase();
+function parseTime(t) {
+  const match = t.match(/(\d+):(\d+)(am|pm)/i);
+  if (!match) return "12:00:00";
+  let h = parseInt(match[1]);
+  const m = match[2];
+  const ap = match[3].toLowerCase();
+  if (ap === 'pm' && h !== 12) h += 12;
+  if (ap === 'am' && h === 12) h = 0;
+  return String(h).padStart(2, '0') + ":" + m + ":00";
 }
 
 function timeAgo(iso) {
   const mins = Math.floor((new Date() - new Date(iso)) / 60000);
-  if (mins < 60) return mins + "m ago";
-  if (mins < 1440) return Math.floor(mins/60) + "h ago";
-  return Math.floor(mins/1440) + "d ago";
+  if (mins < 1) return "just now";
+  if (mins < 60) return mins + " min ago";
+  if (mins < 1440) return Math.floor(mins/60) + " hours ago";
+  return Math.floor(mins/1440) + " days ago";
 }
-
-document.getElementById("todayBtn").onclick = () => {
-  view = "today";
-  document.getElementById("todayBtn").classList.add("active");
-  document.getElementById("weekBtn").classList.remove("active");
-  render();
-};
-
-document.getElementById("weekBtn").onclick = () => {
-  view = "week";
-  document.getElementById("weekBtn").classList.add("active");
-  document.getElementById("todayBtn").classList.remove("active");
-  render();
-};
 
 load();
 </script>
