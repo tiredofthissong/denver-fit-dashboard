@@ -1,11 +1,11 @@
 {
-  "last_updated": "2026-03-02T01:09:09.926177+00:00",
+  "last_updated": "2026-03-02T13:12:15.834225+00:00",
   "location": "Carla Madison",
-  "class_count": 56,
+  "class_count": 55,
   "classes": [
     {
       "name": "AOA: Circuit Fit 50+",
-      "date": "2026-02-23",
+      "date": "2026-03-02",
       "time": "10:30am-11:30am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -15,7 +15,7 @@
     },
     {
       "name": "Cardio Kickboxing",
-      "date": "2026-02-23",
+      "date": "2026-03-02",
       "time": "12:00pm-12:45pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -25,7 +25,7 @@
     },
     {
       "name": "Nia",
-      "date": "2026-02-23",
+      "date": "2026-03-02",
       "time": "5:15pm-6:15pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -35,7 +35,7 @@
     },
     {
       "name": "Indoor Cycling",
-      "date": "2026-02-23",
+      "date": "2026-03-02",
       "time": "5:45pm-6:30pm",
       "location": "Carla Madison",
       "room": "Spin Studio",
@@ -45,7 +45,7 @@
     },
     {
       "name": "Total Body Conditioning",
-      "date": "2026-02-23",
+      "date": "2026-03-02",
       "time": "6:00am-7:00am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -55,7 +55,7 @@
     },
     {
       "name": "HIIT Cycle",
-      "date": "2026-02-23",
+      "date": "2026-03-02",
       "time": "6:15am-7:00am",
       "location": "Carla Madison",
       "room": "Spin Studio",
@@ -65,7 +65,7 @@
     },
     {
       "name": "Yinyasa Yoga",
-      "date": "2026-02-23",
+      "date": "2026-03-02",
       "time": "6:30pm-7:45pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -75,7 +75,7 @@
     },
     {
       "name": "Zumba&reg;",
-      "date": "2026-02-23",
+      "date": "2026-03-02",
       "time": "9:15am-10:15am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -85,7 +85,7 @@
     },
     {
       "name": "AOA: Cardio & Strength FIT 50+",
-      "date": "2026-02-24",
+      "date": "2026-03-03",
       "time": "10:45am-11:45am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -95,17 +95,17 @@
     },
     {
       "name": "Zumba&reg;",
-      "date": "2026-02-24",
+      "date": "2026-03-03",
       "time": "12:00pm-1:00pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
-      "instructor": "Karen Farbman S.",
+      "instructor": "Katia M.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Karen Farbman S.)</span>",
       "duration_minutes": 60,
       "category": "dance"
     },
     {
       "name": "Total Body Conditioning",
-      "date": "2026-02-24",
+      "date": "2026-03-03",
       "time": "2:00pm-3:00pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -115,7 +115,7 @@
     },
     {
       "name": "Yin Yoga",
-      "date": "2026-02-24",
+      "date": "2026-03-03",
       "time": "4:30pm-5:30pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -125,7 +125,7 @@
     },
     {
       "name": "Cycle Weights",
-      "date": "2026-02-24",
+      "date": "2026-03-03",
       "time": "5:45pm-6:30pm",
       "location": "Carla Madison",
       "room": "Spin Studio",
@@ -135,7 +135,7 @@
     },
     {
       "name": "Zumba&reg;",
-      "date": "2026-02-24",
+      "date": "2026-03-03",
       "time": "6:00pm-7:00pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -145,17 +145,17 @@
     },
     {
       "name": "Indoor Cycling",
-      "date": "2026-02-24",
+      "date": "2026-03-03",
       "time": "6:30am-7:30am",
       "location": "Carla Madison",
       "room": "Spin Studio",
-      "instructor": "Staci S.",
+      "instructor": "Melissa K.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Staci S.)</span>",
       "duration_minutes": 60,
       "category": "spin"
     },
     {
       "name": "Vinyasa Yoga",
-      "date": "2026-02-24",
+      "date": "2026-03-03",
       "time": "8:00am-9:00am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -165,7 +165,7 @@
     },
     {
       "name": "Current Channel Water Aerobics",
-      "date": "2026-02-24",
+      "date": "2026-03-03",
       "time": "9:15am-10:15am",
       "location": "Carla Madison",
       "room": "Leisure Pool",
@@ -175,7 +175,7 @@
     },
     {
       "name": "AOA: Cardio & Strength FIT 50+",
-      "date": "2026-02-24",
+      "date": "2026-03-03",
       "time": "9:30am-10:30am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -185,7 +185,7 @@
     },
     {
       "name": "Barre",
-      "date": "2026-02-25",
+      "date": "2026-03-04",
       "time": "10:30am-11:30am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -195,7 +195,7 @@
     },
     {
       "name": "Total Body Conditioning",
-      "date": "2026-02-25",
+      "date": "2026-03-04",
       "time": "12:15pm-1:15pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -205,7 +205,7 @@
     },
     {
       "name": "AOA:  Functional Fit 50+",
-      "date": "2026-02-25",
+      "date": "2026-03-04",
       "time": "1:30pm-2:30pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -215,7 +215,7 @@
     },
     {
       "name": "AOA: Tai Chi",
-      "date": "2026-02-25",
+      "date": "2026-03-04",
       "time": "2:45pm-3:45pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -225,7 +225,7 @@
     },
     {
       "name": "Yoga III",
-      "date": "2026-02-25",
+      "date": "2026-03-04",
       "time": "4:00pm-5:00pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -235,7 +235,7 @@
     },
     {
       "name": "Cycle Weights",
-      "date": "2026-02-25",
+      "date": "2026-03-04",
       "time": "4:45pm-5:30pm",
       "location": "Carla Madison",
       "room": "Spin Studio",
@@ -245,7 +245,7 @@
     },
     {
       "name": "Zumba&reg;",
-      "date": "2026-02-25",
+      "date": "2026-03-04",
       "time": "5:15pm-6:15pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -255,7 +255,7 @@
     },
     {
       "name": "HIIT Cycle",
-      "date": "2026-02-25",
+      "date": "2026-03-04",
       "time": "5:45pm-6:30pm",
       "location": "Carla Madison",
       "room": "Spin Studio",
@@ -265,7 +265,7 @@
     },
     {
       "name": "HIIT Cycle",
-      "date": "2026-02-25",
+      "date": "2026-03-04",
       "time": "6:00am-6:45am",
       "location": "Carla Madison",
       "room": "Spin Studio",
@@ -275,7 +275,7 @@
     },
     {
       "name": "Barre",
-      "date": "2026-02-25",
+      "date": "2026-03-04",
       "time": "6:30pm-7:30pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -285,7 +285,7 @@
     },
     {
       "name": "D2G SocaFit",
-      "date": "2026-02-25",
+      "date": "2026-03-04",
       "time": "9:15am-10:15am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -295,17 +295,17 @@
     },
     {
       "name": "AOA: Cardio & Strength FIT 50+",
-      "date": "2026-02-26",
+      "date": "2026-03-05",
       "time": "10:15am-11:15am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
-      "instructor": "Cat R.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Christine S.)</span>",
+      "instructor": "Christine S.",
       "duration_minutes": 60,
       "category": "strength"
     },
     {
       "name": "Vinyasa Yoga",
-      "date": "2026-02-26",
+      "date": "2026-03-05",
       "time": "12:00pm-1:00pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -315,7 +315,7 @@
     },
     {
       "name": "Total Body Conditioning",
-      "date": "2026-02-26",
+      "date": "2026-03-05",
       "time": "5:00pm-5:45pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -325,17 +325,17 @@
     },
     {
       "name": "HIIT Cycle",
-      "date": "2026-02-26",
+      "date": "2026-03-05",
       "time": "5:45pm-6:30pm",
       "location": "Carla Madison",
       "room": "Spin Studio",
-      "instructor": "Lindsay K.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Natalie S.)</span>",
+      "instructor": "Natalie S.",
       "duration_minutes": 45,
       "category": "spin"
     },
     {
       "name": "Zumba&reg;",
-      "date": "2026-02-26",
+      "date": "2026-03-05",
       "time": "6:00pm-7:00pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -345,7 +345,7 @@
     },
     {
       "name": "Indoor Cycling",
-      "date": "2026-02-26",
+      "date": "2026-03-05",
       "time": "6:30am-7:15am",
       "location": "Carla Madison",
       "room": "Spin Studio",
@@ -355,17 +355,17 @@
     },
     {
       "name": "Barre",
-      "date": "2026-02-26",
+      "date": "2026-03-05",
       "time": "6:30am-7:30am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
-      "instructor": "Linda M.",
+      "instructor": "Kyla M.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Linda M.)</span>",
       "duration_minutes": 60,
       "category": "dance"
     },
     {
       "name": "Bilingual Vinyasa Yoga",
-      "date": "2026-02-26",
+      "date": "2026-03-05",
       "time": "7:45am-8:45am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -375,7 +375,7 @@
     },
     {
       "name": "Zumba&reg;",
-      "date": "2026-02-26",
+      "date": "2026-03-05",
       "time": "9:00am-10:00am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -385,7 +385,7 @@
     },
     {
       "name": "Current Channel Water Aerobics",
-      "date": "2026-02-26",
+      "date": "2026-03-05",
       "time": "9:15am-10:15am",
       "location": "Carla Madison",
       "room": "Leisure Pool",
@@ -395,7 +395,7 @@
     },
     {
       "name": "Pilates",
-      "date": "2026-02-27",
+      "date": "2026-03-06",
       "time": "10:00am-11:00am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -405,7 +405,7 @@
     },
     {
       "name": "AOA:  Functional Fit 50+",
-      "date": "2026-02-27",
+      "date": "2026-03-06",
       "time": "11:15am-12:15pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -415,7 +415,7 @@
     },
     {
       "name": "Indoor Cycling",
-      "date": "2026-02-27",
+      "date": "2026-03-06",
       "time": "12:00pm-12:45pm",
       "location": "Carla Madison",
       "room": "Spin Studio",
@@ -425,7 +425,7 @@
     },
     {
       "name": "Total Body Conditioning",
-      "date": "2026-02-27",
+      "date": "2026-03-06",
       "time": "12:30pm-1:30pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -435,7 +435,7 @@
     },
     {
       "name": "Vinyasa Yoga",
-      "date": "2026-02-27",
+      "date": "2026-03-06",
       "time": "5:30pm-6:30pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -445,17 +445,17 @@
     },
     {
       "name": "HIIT Cycle",
-      "date": "2026-02-27",
+      "date": "2026-03-06",
       "time": "6:00am-6:45am",
       "location": "Carla Madison",
       "room": "Spin Studio",
-      "instructor": "Melissa K.",
+      "instructor": "Staci S.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Melissa K.)</span>",
       "duration_minutes": 45,
       "category": "spin"
     },
     {
       "name": "Zumba&reg;",
-      "date": "2026-02-27",
+      "date": "2026-03-06",
       "time": "8:45am-9:45am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -464,8 +464,18 @@
       "category": "dance"
     },
     {
+      "name": "Open Climbing",
+      "date": "2026-03-07",
+      "time": "10:00am-10:00am",
+      "location": "Carla Madison",
+      "room": "Climbing Wall",
+      "instructor": null,
+      "duration_minutes": 0,
+      "category": "general"
+    },
+    {
       "name": "Barre",
-      "date": "2026-02-28",
+      "date": "2026-03-07",
       "time": "10:00am-11:00am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -474,18 +484,8 @@
       "category": "dance"
     },
     {
-      "name": "Open Climbing",
-      "date": "2026-02-28",
-      "time": "10:00am-1:00pm",
-      "location": "Carla Madison",
-      "room": "Climbing Wall",
-      "instructor": null,
-      "duration_minutes": 180,
-      "category": "general"
-    },
-    {
       "name": "Zumba&reg;",
-      "date": "2026-02-28",
+      "date": "2026-03-07",
       "time": "11:15am-12:15pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -495,7 +495,7 @@
     },
     {
       "name": "Zumba&reg;",
-      "date": "2026-02-28",
+      "date": "2026-03-07",
       "time": "8:30am-9:30am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -505,7 +505,7 @@
     },
     {
       "name": "HIIT Cycle",
-      "date": "2026-02-28",
+      "date": "2026-03-07",
       "time": "8:45am-9:30am",
       "location": "Carla Madison",
       "room": "Spin Studio",
@@ -515,27 +515,17 @@
     },
     {
       "name": "Cycle Weights",
-      "date": "2026-02-28",
+      "date": "2026-03-07",
       "time": "9:45am-10:30am",
       "location": "Carla Madison",
       "room": "Spin Studio",
-      "instructor": "Blair K.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Lindsay K.)</span>",
+      "instructor": "Lindsay K.",
       "duration_minutes": 45,
       "category": "spin"
     },
     {
-      "name": "Open Climbing",
-      "date": "2026-03-01",
-      "time": "10:00am-1:00pm",
-      "location": "Carla Madison",
-      "room": "Climbing Wall",
-      "instructor": null,
-      "duration_minutes": 180,
-      "category": "general"
-    },
-    {
       "name": "Vinyasa Yoga",
-      "date": "2026-03-01",
+      "date": "2026-03-08",
       "time": "11:00am-12:00pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -545,7 +535,7 @@
     },
     {
       "name": "Zumba&reg;",
-      "date": "2026-03-01",
+      "date": "2026-03-08",
       "time": "8:30am-9:30am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
@@ -555,7 +545,7 @@
     },
     {
       "name": "Vinyasa Yoga",
-      "date": "2026-03-01",
+      "date": "2026-03-08",
       "time": "9:45am-10:45am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
