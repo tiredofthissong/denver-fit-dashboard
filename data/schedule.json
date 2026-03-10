@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-09T13:16:58.432794+00:00",
+  "last_updated": "2026-03-10T01:04:25.059571+00:00",
   "location": "Carla Madison",
   "class_count": 54,
   "classes": [
@@ -109,7 +109,7 @@
       "time": "2:00pm-3:00pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
-      "instructor": "Alex S.",
+      "instructor": "Christine S.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Alex S.)</span>",
       "duration_minutes": 60,
       "category": "general"
     },
