@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-11T13:14:27.288219+00:00",
+  "last_updated": "2026-03-12T01:02:37.336902+00:00",
   "location": "Carla Madison",
   "class_count": 54,
   "classes": [
@@ -184,7 +184,7 @@
       "category": "strength"
     },
     {
-      "name": "Barre",
+      "name": "CANCELED: Barre",
       "date": "2026-03-11",
       "time": "10:30am-11:30am",
       "location": "Carla Madison",
@@ -329,7 +329,7 @@
       "time": "5:45pm-6:30pm",
       "location": "Carla Madison",
       "room": "Spin Studio",
-      "instructor": "Natalie S.",
+      "instructor": "Blair K.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Natalie S.)</span>",
       "duration_minutes": 45,
       "category": "spin"
     },
