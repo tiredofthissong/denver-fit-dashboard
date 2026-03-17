@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-16T13:26:10.132746+00:00",
+  "last_updated": "2026-03-17T01:10:28.948610+00:00",
   "location": "Carla Madison",
   "class_count": 53,
   "classes": [
@@ -259,7 +259,7 @@
       "time": "6:00am-6:45am",
       "location": "Carla Madison",
       "room": "Spin Studio",
-      "instructor": "Melissa K.",
+      "instructor": "Catherine W.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Melissa K.)</span>",
       "duration_minutes": 45,
       "category": "spin"
     },
