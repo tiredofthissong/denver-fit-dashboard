@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-31T13:46:37.223457+00:00",
+  "last_updated": "2026-04-01T01:26:15.791314+00:00",
   "location": "Carla Madison",
   "class_count": 54,
   "classes": [
@@ -239,7 +239,7 @@
       "time": "4:45pm-5:30pm",
       "location": "Carla Madison",
       "room": "Spin Studio",
-      "instructor": "Lindsay K.",
+      "instructor": "Blair K.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Lindsay K.)</span>",
       "duration_minutes": 45,
       "category": "spin"
     },
@@ -259,7 +259,7 @@
       "time": "5:45pm-6:30pm",
       "location": "Carla Madison",
       "room": "Spin Studio",
-      "instructor": "Lindsay K.",
+      "instructor": "Blair K.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Lindsay K.)</span>",
       "duration_minutes": 45,
       "category": "spin"
     },
@@ -469,7 +469,7 @@
       "time": "10:00am-11:00am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
-      "instructor": "Melissa C.",
+      "instructor": "Kyla M.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Melissa C.)</span>",
       "duration_minutes": 60,
       "category": "dance"
     },
