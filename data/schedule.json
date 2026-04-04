@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-04-03T13:16:13.389669+00:00",
+  "last_updated": "2026-04-04T01:13:07.974022+00:00",
   "location": "Carla Madison",
   "class_count": 54,
   "classes": [
@@ -414,7 +414,7 @@
       "category": "strength"
     },
     {
-      "name": "Indoor Cycling",
+      "name": "CANCELED: Indoor Cycling",
       "date": "2026-04-03",
       "time": "12:00pm-12:45pm",
       "location": "Carla Madison",
@@ -509,7 +509,7 @@
       "time": "9:45am-10:30am",
       "location": "Carla Madison",
       "room": "Spin Studio",
-      "instructor": "Lindsay K.",
+      "instructor": "Blair K.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Lindsay K.)</span>",
       "duration_minutes": 45,
       "category": "spin"
     },
