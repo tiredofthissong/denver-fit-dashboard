@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-04-09T01:11:19.159318+00:00",
+  "last_updated": "2026-04-09T13:57:01.546925+00:00",
   "location": "Carla Madison",
   "class_count": 58,
   "classes": [
@@ -429,7 +429,7 @@
       "time": "10:00am-11:00am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
-      "instructor": "Bobbi E.",
+      "instructor": "Kristine C.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Bobbi E.)</span>",
       "duration_minutes": 60,
       "category": "pilates"
     },
@@ -459,7 +459,7 @@
       "time": "12:30pm-1:30pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
-      "instructor": "Linda M.",
+      "instructor": "Kristine C.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Linda M.)</span>",
       "duration_minutes": 60,
       "category": "general"
     },
