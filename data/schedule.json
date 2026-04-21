@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-04-20T13:56:25.017265+00:00",
+  "last_updated": "2026-04-21T01:25:25.718978+00:00",
   "location": "Carla Madison",
   "class_count": 58,
   "classes": [
@@ -389,7 +389,7 @@
       "time": "6:30am-7:30am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
-      "instructor": "Linda M.",
+      "instructor": "Kyla M.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Linda M.)</span>",
       "duration_minutes": 60,
       "category": "dance"
     },
@@ -499,7 +499,7 @@
       "time": "10:00am-11:00am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
-      "instructor": "Melissa C.",
+      "instructor": "Kyla M.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Melissa C.)</span>",
       "duration_minutes": 60,
       "category": "dance"
     },
