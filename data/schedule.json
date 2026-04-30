@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-04-29T14:12:37.793850+00:00",
+  "last_updated": "2026-04-30T01:55:29.446084+00:00",
   "location": "Carla Madison",
   "class_count": 58,
   "classes": [
@@ -404,12 +404,12 @@
       "category": "dance"
     },
     {
-      "name": "Bilingual Vinyasa Yoga",
+      "name": "Yoga I",
       "date": "2026-04-30",
       "time": "7:45am-8:45am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
-      "instructor": "Michelle S.",
+      "instructor": "Franklin G.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Michelle S.)</span>",
       "duration_minutes": 60,
       "category": "yoga"
     },
