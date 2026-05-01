@@ -1,7 +1,7 @@
 {
-  "last_updated": "2026-04-30T14:10:08.881388+00:00",
+  "last_updated": "2026-05-01T01:57:18.261098+00:00",
   "location": "Carla Madison",
-  "class_count": 58,
+  "class_count": 59,
   "classes": [
     {
       "name": "AOA: Circuit Fit 50+",
@@ -212,6 +212,16 @@
       "instructor": "Melissa C.",
       "duration_minutes": 60,
       "category": "dance"
+    },
+    {
+      "name": "Total Body Conditioning",
+      "date": "2026-04-29",
+      "time": "12:15pm-1:15pm",
+      "location": "Carla Madison",
+      "room": "Fitness Studio",
+      "instructor": "Melissa C.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Samantha B.)</span>",
+      "duration_minutes": 60,
+      "category": "general"
     },
     {
       "name": "Barre",
