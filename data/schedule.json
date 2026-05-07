@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-05-06T14:28:01.345120+00:00",
+  "last_updated": "2026-05-07T01:53:49.043226+00:00",
   "location": "Carla Madison",
   "class_count": 58,
   "classes": [
@@ -384,7 +384,7 @@
       "category": "dance"
     },
     {
-      "name": "Indoor Cycling",
+      "name": "CANCELED: Indoor Cycling",
       "date": "2026-05-07",
       "time": "6:30am-7:15am",
       "location": "Carla Madison",
@@ -404,12 +404,12 @@
       "category": "dance"
     },
     {
-      "name": "Bilingual Vinyasa Yoga",
+      "name": "Yoga I",
       "date": "2026-05-07",
       "time": "7:45am-8:45am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
-      "instructor": "Michelle S.",
+      "instructor": "Franklin G.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Michelle S.)</span>",
       "duration_minutes": 60,
       "category": "yoga"
     },
