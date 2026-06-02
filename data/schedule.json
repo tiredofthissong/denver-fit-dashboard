@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-01T17:52:37.188650+00:00",
+  "last_updated": "2026-06-02T02:35:13.942668+00:00",
   "location": "Carla Madison",
   "class_count": 57,
   "classes": [
@@ -64,13 +64,13 @@
       "category": "spin"
     },
     {
-      "name": "Yinyasa Yoga",
+      "name": "Yoga I",
       "date": "2026-06-01",
-      "time": "6:30pm-7:45pm",
+      "time": "6:30pm-7:30pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
-      "instructor": "Alona H.",
-      "duration_minutes": 75,
+      "instructor": "Franklin G.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Alona H.)</span>",
+      "duration_minutes": 60,
       "category": "yoga"
     },
     {
