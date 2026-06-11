@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-10T15:50:40.708858+00:00",
+  "last_updated": "2026-06-11T02:35:34.034024+00:00",
   "location": "Carla Madison",
   "class_count": 57,
   "classes": [
@@ -29,7 +29,7 @@
       "time": "5:15pm-6:15pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
-      "instructor": "Shawn  W.",
+      "instructor": "Shawn W.",
       "duration_minutes": 60,
       "category": "general"
     },
