@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-16T02:42:52.307325+00:00",
+  "last_updated": "2026-06-16T17:05:01.831327+00:00",
   "location": "Carla Madison",
   "class_count": 57,
   "classes": [
@@ -299,7 +299,7 @@
       "time": "7:30am-8:30am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
-      "instructor": "Jennae F.",
+      "instructor": "Alex S.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Jennae F.)</span>",
       "duration_minutes": 60,
       "category": "general"
     },
