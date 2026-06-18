@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-18T02:36:31.747128+00:00",
+  "last_updated": "2026-06-18T15:37:54.465000+00:00",
   "location": "Carla Madison",
   "class_count": 57,
   "classes": [
@@ -359,7 +359,7 @@
       "time": "5:45pm-6:30pm",
       "location": "Carla Madison",
       "room": "Spin Studio",
-      "instructor": "Natalie S.",
+      "instructor": "Lindsay K.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Natalie S.)</span>",
       "duration_minutes": 45,
       "category": "spin"
     },
