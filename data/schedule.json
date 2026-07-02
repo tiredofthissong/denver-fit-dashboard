@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-01T14:47:33.642922+00:00",
+  "last_updated": "2026-07-02T02:08:35.665283+00:00",
   "location": "Carla Madison",
   "class_count": 59,
   "classes": [
@@ -564,7 +564,7 @@
       "category": "spin"
     },
     {
-      "name": "Vinyasa Yoga",
+      "name": "CANCELED: Vinyasa Yoga",
       "date": "2026-07-05",
       "time": "11:00am-12:00pm",
       "location": "Carla Madison",
@@ -584,12 +584,12 @@
       "category": "dance"
     },
     {
-      "name": "Vinyasa Yoga",
+      "name": "Yoga I",
       "date": "2026-07-05",
       "time": "9:45am-10:45am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
-      "instructor": "Rebecca  J.",
+      "instructor": "Franklin G.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Rebecca  J.)</span>",
       "duration_minutes": 60,
       "category": "yoga"
     }
