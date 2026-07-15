@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-14T13:56:19.984476+00:00",
+  "last_updated": "2026-07-15T01:18:20.583988+00:00",
   "location": "Carla Madison",
   "class_count": 58,
   "classes": [
@@ -499,7 +499,7 @@
       "time": "8:45am-9:45am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
-      "instructor": "Mandy Y.",
+      "instructor": "June N.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Mandy Y.)</span>",
       "duration_minutes": 60,
       "category": "dance"
     },
