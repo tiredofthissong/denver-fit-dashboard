@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-08-03T14:50:14.076574+00:00",
+  "last_updated": "2026-08-04T01:23:07.902163+00:00",
   "location": "Carla Madison",
   "class_count": 58,
   "classes": [
@@ -109,7 +109,7 @@
       "time": "12:00pm-1:00pm",
       "location": "Carla Madison",
       "room": "Fitness Studio",
-      "instructor": "Karen Farbman S.",
+      "instructor": "Jason  F.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Karen Farbman S.)</span>",
       "duration_minutes": 60,
       "category": "dance"
     },
@@ -309,7 +309,7 @@
       "time": "7:30am-8:30am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
-      "instructor": "Jennae F.",
+      "instructor": "Alex S.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Jennae F.)</span>",
       "duration_minutes": 60,
       "category": "general"
     },
