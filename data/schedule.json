@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-08-11T13:16:14.654652+00:00",
+  "last_updated": "2026-08-12T00:59:42.277660+00:00",
   "location": "Carla Madison",
   "class_count": 54,
   "classes": [
@@ -379,7 +379,7 @@
       "time": "9:00am-10:00am",
       "location": "Carla Madison",
       "room": "Fitness Studio",
-      "instructor": "Beth L.",
+      "instructor": "Sofia C.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Beth L.)</span>",
       "duration_minutes": 60,
       "category": "dance"
     },
