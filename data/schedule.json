@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-08-14T13:17:05.381480+00:00",
+  "last_updated": "2026-08-15T00:35:43.300014+00:00",
   "location": "Carla Madison",
   "class_count": 54,
   "classes": [
@@ -499,12 +499,12 @@
       "time": "8:45am-9:30am",
       "location": "Carla Madison",
       "room": "Spin Studio",
-      "instructor": "Lindsay K.",
+      "instructor": "Melissa K.<span class=\"subbed\" style=\"color: #CC0000;\">(sub for Lindsay K.)</span>",
       "duration_minutes": 45,
       "category": "spin"
     },
     {
-      "name": "Cycle Weights",
+      "name": "CANCELED: Cycle Weights",
       "date": "2026-08-15",
       "time": "9:45am-10:30am",
       "location": "Carla Madison",
